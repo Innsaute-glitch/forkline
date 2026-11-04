@@ -90,6 +90,7 @@ export async function* run(input: RunInput, queryFn: QueryFn = sdkQuery): AsyncG
     syntheticText: [],
   };
   let started = false;
+  let refusalCategory: string | null = null;
   let guardError: string | null = null;
   let query: Query | undefined;
 
@@ -111,8 +112,10 @@ export async function* run(input: RunInput, queryFn: QueryFn = sdkQuery): AsyncG
           }
         } else if (m.subtype === 'model_refusal_no_fallback') {
           facts.refusalNoFallback = true;
+          refusalCategory = m.api_refusal_category ?? null;
         } else if (m.subtype === 'model_refusal_fallback') {
           facts.refusalFallback = true;
+          refusalCategory = m.api_refusal_category ?? null;
         } else if (m.subtype === 'mirror_error') {
           log().warn({ sessionId: m.key.sessionId }, 'transcript store append failed');
         }
@@ -193,6 +196,23 @@ export async function* run(input: RunInput, queryFn: QueryFn = sdkQuery): AsyncG
   }
 
   const outcome = classifyOutcome(facts, Date.now() / 1000);
+  if (facts.refusalNoFallback || facts.refusalFallback || facts.stopReasonRefusal) {
+    // Metadata only: Claude's explanation can quote the chat, so it is never logged.
+    log().warn(
+      {
+        model: translated.claudeModel,
+        routeCase: plan.case,
+        category: refusalCategory,
+        noFallbackNotice: facts.refusalNoFallback,
+        fallbackNotice: facts.refusalFallback,
+        stopReasonRefusal: facts.stopReasonRefusal,
+        isError: facts.result?.isError ?? null,
+        sawText: facts.sawText,
+        started,
+      },
+      'model refused',
+    );
+  }
   if (outcome.kind === 'error') {
     yield { type: 'error', error: outcome.error };
     return;
