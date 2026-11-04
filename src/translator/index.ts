@@ -1,10 +1,48 @@
-// STUB. Task 1 replaces this file. Returns a fixture so other tasks can start.
-import { readFileSync } from 'node:fs';
 import type { Config } from '../config.js';
-import type { ChatRequest, TranslatedRequest, TranslateResult } from '../types.js';
+import { ADJUSTMENT, REJECT_EXEMPT } from '../constants.js';
+import { bridgeError } from '../errors.js';
+import type { ChatRequest, TranslateResult } from '../types.js';
+import { splitMessages } from './messages.js';
+import { resolveParams } from './params.js';
 
-export function translate(_request: ChatRequest, _config: Config): TranslateResult {
-  const url = new URL('../../fixtures/golden/translated/greeting-lorebook.json', import.meta.url);
-  const value = JSON.parse(readFileSync(url, 'utf8')) as TranslatedRequest;
-  return { ok: true, value };
+/** Pure: turns an OpenAI chat request into what the router and runner need, or a 400. */
+export function translate(request: ChatRequest, config: Config): TranslateResult {
+  if (typeof request !== 'object' || request === null || Array.isArray(request)) {
+    return { ok: false, error: bridgeError('invalid-request', 'request body must be a JSON object') };
+  }
+
+  const split = splitMessages(request.messages);
+  if (!split.ok) return split;
+  const resolved = resolveParams(request, config);
+  if (!resolved.ok) return resolved;
+
+  const adjustments = [
+    ...new Set([ADJUSTMENT.systemHeaderAdded, ...split.value.adjustments, ...resolved.value.adjustments]),
+  ].sort();
+
+  if (config.adjustments === 'reject') {
+    const rejected = adjustments.filter((name) => !REJECT_EXEMPT.includes(name));
+    if (rejected.length > 0) {
+      return {
+        ok: false,
+        error: bridgeError(
+          'adjustment-rejected',
+          `this request would need adjustments, and adjustments is set to "reject": ${rejected.join(', ')}`,
+        ),
+      };
+    }
+  }
+
+  return {
+    ok: true,
+    value: {
+      responseModel: resolved.value.responseModel,
+      claudeModel: resolved.value.claudeModel,
+      systemPrompt: [config.systemHeader, ...split.value.systemTexts],
+      history: split.value.history,
+      livePrompt: split.value.livePrompt,
+      params: resolved.value.params,
+      adjustments,
+    },
+  };
 }

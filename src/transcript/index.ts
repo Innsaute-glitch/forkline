@@ -1,6 +1,6 @@
-// STUB. Task 2 replaces this file.
+// Transcript entries for rebuilt history (case D). Templates: research-notes.md section 4.
 import type { SessionStoreEntry } from '@anthropic-ai/claude-agent-sdk';
-import type { HistoryItem } from '../types.js';
+import type { HistoryItem, MessageContent } from '../types.js';
 
 export interface EntryContext {
   sessionId: string;
@@ -11,7 +11,74 @@ export interface EntryContext {
   now: () => string;
 }
 
+/** Anthropic content block, as written in a transcript or a streamed user message. */
+export type ImageMediaType = 'image/png' | 'image/jpeg' | 'image/gif' | 'image/webp';
+
+export type ContentBlock =
+  | { type: 'text'; text: string }
+  | { type: 'image'; source: { type: 'base64'; media_type: ImageMediaType; data: string } };
+
+const DATA_URL = /^data:([^;,]+);base64,(.*)$/s;
+
+/** OpenAI content parts to Anthropic blocks. A string stays a string. Programmer error on a bad image URL. */
+export function toContent(content: MessageContent): string | ContentBlock[] {
+  if (typeof content === 'string') return content;
+  return content.map((part): ContentBlock => {
+    if (part.type === 'text') return { type: 'text', text: part.text };
+    const match = DATA_URL.exec(part.image_url.url);
+    if (!match) throw new Error('image_url is not a base64 data URL; the translator should have rejected it');
+    return { type: 'image', source: { type: 'base64', media_type: match[1] as ImageMediaType, data: match[2] as string } };
+  });
+}
+
+/** Assistant history is text: a string, or text parts joined (the translator already joined arrays). */
+function assistantText(content: MessageContent): string {
+  if (typeof content === 'string') return content;
+  return content.map((part) => (part.type === 'text' ? part.text : '')).join('');
+}
+
+function systemText(content: MessageContent): string {
+  return assistantText(content);
+}
+
 /** Turns history into chained transcript entries (RN section 4). Pure given `ctx`. */
-export function buildEntries(_history: HistoryItem[], _ctx: EntryContext): SessionStoreEntry[] {
-  return [];
+export function buildEntries(history: HistoryItem[], ctx: EntryContext): SessionStoreEntry[] {
+  const entries: SessionStoreEntry[] = [];
+  let parentUuid: string | null = null;
+  for (const item of history) {
+    const uuid = ctx.newUuid();
+    const timestamp = ctx.now();
+    const base = { parentUuid, uuid, timestamp, sessionId: ctx.sessionId };
+    if (item.role === 'user') {
+      entries.push({ ...base, type: 'user', message: { role: 'user', content: toContent(item.content) } });
+    } else if (item.role === 'assistant') {
+      entries.push({
+        ...base,
+        type: 'assistant',
+        message: {
+          id: `msg_${uuid.replaceAll('-', '')}`,
+          type: 'message',
+          role: 'assistant',
+          model: ctx.model,
+          content: [{ type: 'text', text: assistantText(item.content) }],
+          stop_reason: 'end_turn',
+          stop_sequence: null,
+          usage: { input_tokens: 0, output_tokens: 0 },
+        },
+      });
+    } else {
+      // A system message inside the conversation becomes a real system message in the request.
+      // `session_context`, not `date`: a seeded `date` attachment makes Claude Code compare it with
+      // today, then either announce a changed date or drop its own date line.
+      entries.push({
+        ...base,
+        type: 'attachment',
+        attachment: { type: 'session_context', context: {} },
+        rendered: [{ content: systemText(item.content) }],
+        renderedRole: 'system',
+      });
+    }
+    parentUuid = uuid;
+  }
+  return entries;
 }

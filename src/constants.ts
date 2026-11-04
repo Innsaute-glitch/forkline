@@ -8,7 +8,6 @@ export const ADJUSTMENT = {
   effortMapped: 'effort-mapped',
   trailingSystemMoved: 'trailing-system-moved',
   blankUserDropped: 'blank-user-dropped',
-  /** Reserved: used only if Task 2 finds a blank system entry breaks resume. */
   blankSystemDropped: 'blank-system-dropped',
   reasoningReplayIgnored: 'reasoning-replay-ignored',
 } as const;
@@ -51,6 +50,20 @@ export const ENV = {
   apiKey: 'FORKLINE_API_KEY',
   claudeToken: 'FORKLINE_CLAUDE_TOKEN',
 } as const;
+
+/** Environment variable names Claude Code reads. */
+export const CLAUDE_ENV = {
+  oauthToken: 'CLAUDE_CODE_OAUTH_TOKEN',
+  configDir: 'CLAUDE_CONFIG_DIR',
+  disableAutoUpdater: 'DISABLE_AUTOUPDATER',
+  disableAttachments: 'CLAUDE_CODE_DISABLE_ATTACHMENTS',
+  claudeAiMcp: 'ENABLE_CLAUDEAI_MCP_SERVERS',
+  disableCompact: 'DISABLE_COMPACT',
+  maxOutputTokens: 'CLAUDE_CODE_MAX_OUTPUT_TOKENS',
+} as const;
+
+/** Copied from the parent process into the Claude Code environment when present. */
+export const PASSTHROUGH_ENV: readonly string[] = ['PATH', 'HOME', 'LANG', 'TZ'];
 
 export const DEFAULT_CONFIG_PATH = 'config/forkline.dev.json';
 
