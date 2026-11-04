@@ -1,0 +1,24 @@
+# Private chat captures from the live tests (real character card and chat content)
+tools/captures/
+
+# Third-party repos cloned for reading only; each has its own license and history
+reference/
+
+# Machine-local Claude Code settings
+.claude/settings.local.json
+
+# Build output and dependencies
+node_modules/
+dist/
+coverage/
+__pycache__/
+
+# Runtime data and secrets
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+.env
+.env.*
+secrets/
+*.log
