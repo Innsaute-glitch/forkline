@@ -1,0 +1,7 @@
+{
+  "id": "chatcmpl-00000000-0000-4000-8000-000000000000",
+  "created": 1800000000,
+  "model": "claude-sonnet-5-5",
+  "stop": [],
+  "includeUsage": true
+}

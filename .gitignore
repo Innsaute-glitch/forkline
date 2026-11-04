@@ -22,3 +22,11 @@ __pycache__/
 .env.*
 secrets/
 *.log
+
+# Orchestrator working files and tool scratch folders
+tasks/*.md
+notes.md
+.playwright-mcp/
+
+# Machine-local config (the dev and example configs are committed)
+config/forkline.json

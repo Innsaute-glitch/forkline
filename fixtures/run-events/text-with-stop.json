@@ -1,0 +1,30 @@
+[
+  {
+    "type": "started",
+    "sessionId": "11111111-1111-4111-8111-111111111111",
+    "model": "claude-sonnet-5-5"
+  },
+  {
+    "type": "text",
+    "text": "Mira nods.\nUs"
+  },
+  {
+    "type": "text",
+    "text": "er: thanks"
+  },
+  {
+    "type": "text",
+    "text": " again"
+  },
+  {
+    "type": "finished",
+    "sessionId": "11111111-1111-4111-8111-111111111111",
+    "finishReason": "stop",
+    "usage": {
+      "inputTokens": 12,
+      "outputTokens": 40,
+      "cacheReadTokens": 3000,
+      "cacheWriteTokens": 25
+    }
+  }
+]

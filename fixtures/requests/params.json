@@ -1,0 +1,33 @@
+{
+  "model": "claude-haiku-5-5",
+  "stream": false,
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are the narrator of a slow, character-driven story."
+    },
+    {
+      "role": "system",
+      "content": "Character: Mira Vale, a lighthouse keeper on the island of Harrowgate."
+    },
+    {
+      "role": "system",
+      "content": "<loomutilities></loomutilities>"
+    },
+    {
+      "role": "user",
+      "content": "I did. Is the ferry still running?"
+    }
+  ],
+  "reasoning_effort": "minimal",
+  "max_completion_tokens": 2000,
+  "stop": [
+    "\nUser:",
+    ""
+  ],
+  "min_p": 0.05,
+  "repetition_penalty": 1.1,
+  "stream_options": {
+    "include_usage": false
+  }
+}

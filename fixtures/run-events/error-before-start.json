@@ -1,0 +1,11 @@
+[
+  {
+    "type": "error",
+    "error": {
+      "code": "usage-limit",
+      "status": 429,
+      "message": "Usage limit reached",
+      "retryAfterSeconds": 3600
+    }
+  }
+]

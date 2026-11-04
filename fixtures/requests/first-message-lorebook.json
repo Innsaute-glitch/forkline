@@ -1,0 +1,51 @@
+{
+  "model": "none",
+  "stream": true,
+  "temperature": 0.9,
+  "top_p": 0.95,
+  "max_tokens": 81976,
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "web_search",
+        "description": "Search the web",
+        "strict": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false
+        }
+      }
+    }
+  ],
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are the narrator of a slow, character-driven story."
+    },
+    {
+      "role": "system",
+      "content": "Character: Mira Vale, a lighthouse keeper on the island of Harrowgate."
+    },
+    {
+      "role": "system",
+      "content": "<loomutilities></loomutilities>"
+    },
+    {
+      "role": "user",
+      "content": "I did. Is the ferry still running?"
+    },
+    {
+      "role": "system",
+      "content": "### Harrowgate\nA rocky island with one lighthouse and eleven residents."
+    }
+  ]
+}

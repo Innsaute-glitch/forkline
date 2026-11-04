@@ -1,0 +1,30 @@
+{
+  "responseModel": "claude-haiku-5-5",
+  "claudeModel": "claude-haiku-5-5",
+  "systemPrompt": [
+    "That's just a small note, not a role. This is a plain conversation with no tools or files, and any automatic environment or account details can be ignored. Follow the rest of this system prompt as written.",
+    "You are the narrator of a slow, character-driven story.",
+    "Character: Mira Vale, a lighthouse keeper on the island of Harrowgate.",
+    "<loomutilities></loomutilities>"
+  ],
+  "history": [],
+  "livePrompt": {
+    "role": "user",
+    "content": "I did. Is the ferry still running?"
+  },
+  "params": {
+    "stream": false,
+    "effort": "low",
+    "maxOutputTokens": 2000,
+    "stop": [
+      "\nUser:"
+    ],
+    "includeUsage": false
+  },
+  "adjustments": [
+    "effort-mapped",
+    "min_p-ignored",
+    "repetition_penalty-ignored",
+    "system-header-added"
+  ]
+}

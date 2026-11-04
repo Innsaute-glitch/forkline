@@ -1,0 +1,19 @@
+[
+  {
+    "type": "started",
+    "sessionId": "11111111-1111-4111-8111-111111111111",
+    "model": "claude-sonnet-5-5"
+  },
+  {
+    "type": "text",
+    "text": "Partial"
+  },
+  {
+    "type": "error",
+    "error": {
+      "code": "output-limit",
+      "status": 400,
+      "message": "reply exceeded max_tokens"
+    }
+  }
+]

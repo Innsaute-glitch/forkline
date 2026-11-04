@@ -1,0 +1,586 @@
+[
+  {
+    "name": "no-user-message",
+    "request": {
+      "model": "none",
+      "stream": true,
+      "temperature": 0.9,
+      "top_p": 0.95,
+      "max_tokens": 81976,
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "web_search",
+            "description": "Search the web",
+            "strict": true,
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are the narrator of a slow, character-driven story."
+        },
+        {
+          "role": "assistant",
+          "content": "*Mira looks up from the lamp.* \"You came a long way in this weather.\""
+        }
+      ]
+    },
+    "status": 400
+  },
+  {
+    "name": "only-system",
+    "request": {
+      "model": "none",
+      "stream": true,
+      "temperature": 0.9,
+      "top_p": 0.95,
+      "max_tokens": 81976,
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "web_search",
+            "description": "Search the web",
+            "strict": true,
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are the narrator of a slow, character-driven story."
+        },
+        {
+          "role": "system",
+          "content": "Character: Mira Vale, a lighthouse keeper on the island of Harrowgate."
+        }
+      ]
+    },
+    "status": 400
+  },
+  {
+    "name": "trailing-assistant",
+    "request": {
+      "model": "none",
+      "stream": true,
+      "temperature": 0.9,
+      "top_p": 0.95,
+      "max_tokens": 81976,
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "web_search",
+            "description": "Search the web",
+            "strict": true,
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are the narrator of a slow, character-driven story."
+        },
+        {
+          "role": "user",
+          "content": "I did. Is the ferry still running?"
+        },
+        {
+          "role": "assistant",
+          "content": "\"Not since the storm.\" *She hands you a blanket.*"
+        }
+      ]
+    },
+    "status": 400
+  },
+  {
+    "name": "reasoning-prefill",
+    "request": {
+      "model": "none",
+      "stream": true,
+      "temperature": 0.9,
+      "top_p": 0.95,
+      "max_tokens": 81976,
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "web_search",
+            "description": "Search the web",
+            "strict": true,
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are the narrator of a slow, character-driven story."
+        },
+        {
+          "role": "user",
+          "content": "I did. Is the ferry still running?"
+        },
+        {
+          "role": "assistant",
+          "content": "",
+          "partial": true,
+          "reasoning_content": "Thinking..."
+        }
+      ]
+    },
+    "status": 400
+  },
+  {
+    "name": "tool-message",
+    "request": {
+      "model": "none",
+      "stream": true,
+      "temperature": 0.9,
+      "top_p": 0.95,
+      "max_tokens": 81976,
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "web_search",
+            "description": "Search the web",
+            "strict": true,
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are the narrator of a slow, character-driven story."
+        },
+        {
+          "role": "user",
+          "content": "I did. Is the ferry still running?"
+        },
+        {
+          "role": "tool",
+          "tool_call_id": "x",
+          "content": "y"
+        },
+        {
+          "role": "user",
+          "content": "Then I suppose I am staying the night."
+        }
+      ]
+    },
+    "status": 400
+  },
+  {
+    "name": "assistant-tool-calls",
+    "request": {
+      "model": "none",
+      "stream": true,
+      "temperature": 0.9,
+      "top_p": 0.95,
+      "max_tokens": 81976,
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "web_search",
+            "description": "Search the web",
+            "strict": true,
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are the narrator of a slow, character-driven story."
+        },
+        {
+          "role": "user",
+          "content": "I did. Is the ferry still running?"
+        },
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "id": "x",
+              "type": "function",
+              "function": {
+                "name": "f",
+                "arguments": "{}"
+              }
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": "Then I suppose I am staying the night."
+        }
+      ]
+    },
+    "status": 400
+  },
+  {
+    "name": "n-greater-than-one",
+    "request": {
+      "model": "none",
+      "stream": true,
+      "temperature": 0.9,
+      "top_p": 0.95,
+      "max_tokens": 81976,
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "web_search",
+            "description": "Search the web",
+            "strict": true,
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are the narrator of a slow, character-driven story."
+        },
+        {
+          "role": "user",
+          "content": "I did. Is the ferry still running?"
+        }
+      ],
+      "n": 2
+    },
+    "status": 400
+  },
+  {
+    "name": "response-format",
+    "request": {
+      "model": "none",
+      "stream": true,
+      "temperature": 0.9,
+      "top_p": 0.95,
+      "max_tokens": 81976,
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "web_search",
+            "description": "Search the web",
+            "strict": true,
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are the narrator of a slow, character-driven story."
+        },
+        {
+          "role": "user",
+          "content": "I did. Is the ferry still running?"
+        }
+      ],
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "status": 400
+  },
+  {
+    "name": "blank-live-prompt",
+    "request": {
+      "model": "none",
+      "stream": true,
+      "temperature": 0.9,
+      "top_p": 0.95,
+      "max_tokens": 81976,
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "web_search",
+            "description": "Search the web",
+            "strict": true,
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are the narrator of a slow, character-driven story."
+        },
+        {
+          "role": "user",
+          "content": "I did. Is the ferry still running?"
+        },
+        {
+          "role": "assistant",
+          "content": "\"Not since the storm.\" *She hands you a blanket.*"
+        },
+        {
+          "role": "user",
+          "content": "  "
+        }
+      ]
+    },
+    "status": 400
+  },
+  {
+    "name": "unknown-role",
+    "request": {
+      "model": "none",
+      "stream": true,
+      "temperature": 0.9,
+      "top_p": 0.95,
+      "max_tokens": 81976,
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "web_search",
+            "description": "Search the web",
+            "strict": true,
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are the narrator of a slow, character-driven story."
+        },
+        {
+          "role": "developer",
+          "content": "x"
+        },
+        {
+          "role": "user",
+          "content": "I did. Is the ferry still running?"
+        }
+      ]
+    },
+    "status": 400
+  },
+  {
+    "name": "remote-image",
+    "request": {
+      "model": "none",
+      "stream": true,
+      "temperature": 0.9,
+      "top_p": 0.95,
+      "max_tokens": 81976,
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "web_search",
+            "description": "Search the web",
+            "strict": true,
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are the narrator of a slow, character-driven story."
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "image_url",
+              "image_url": {
+                "url": "https://example.com/a.png"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "status": 400
+  },
+  {
+    "name": "bad-effort",
+    "request": {
+      "model": "none",
+      "stream": true,
+      "temperature": 0.9,
+      "top_p": 0.95,
+      "max_tokens": 81976,
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "web_search",
+            "description": "Search the web",
+            "strict": true,
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are the narrator of a slow, character-driven story."
+        },
+        {
+          "role": "user",
+          "content": "I did. Is the ferry still running?"
+        }
+      ],
+      "reasoning_effort": "extreme"
+    },
+    "status": 400
+  },
+  {
+    "name": "messages-missing",
+    "request": {
+      "model": "none"
+    },
+    "status": 400
+  }
+]

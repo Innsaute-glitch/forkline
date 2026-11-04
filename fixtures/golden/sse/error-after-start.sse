@@ -1,0 +1,8 @@
+data: {"id":"chatcmpl-00000000-0000-4000-8000-000000000000","object":"chat.completion.chunk","created":1800000000,"model":"claude-sonnet-5-5","choices":[{"index":0,"delta":{"role":"assistant","content":""},"finish_reason":null}]}
+
+data: {"id":"chatcmpl-00000000-0000-4000-8000-000000000000","object":"chat.completion.chunk","created":1800000000,"model":"claude-sonnet-5-5","choices":[{"index":0,"delta":{"content":"Partial"},"finish_reason":null}]}
+
+data: {"error":{"message":"reply exceeded max_tokens","type":"output-limit","code":400}}
+
+data: [DONE]
+

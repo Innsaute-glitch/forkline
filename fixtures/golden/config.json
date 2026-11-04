@@ -1,0 +1,25 @@
+{
+  "listen": {
+    "host": "127.0.0.1",
+    "port": 8899
+  },
+  "models": [
+    {
+      "id": "claude-sonnet-5-5",
+      "claudeModel": "claude-sonnet-5-5",
+      "maxOutputTokens": 64000
+    },
+    {
+      "id": "claude-haiku-5-5",
+      "claudeModel": "claude-haiku-5-5",
+      "maxOutputTokens": 64000
+    }
+  ],
+  "defaultModel": "claude-sonnet-5-5",
+  "defaultEffort": "medium",
+  "paths": {
+    "workDir": "/tmp/forkline-golden/work",
+    "configDir": "/tmp/forkline-golden/config",
+    "database": "/tmp/forkline-golden/forkline.db"
+  }
+}

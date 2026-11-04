@@ -1,0 +1,93 @@
+{
+  "listen": {
+    "host": "100.64.0.1",
+    "port": 8800
+  },
+  "models": [
+    {
+      "id": "claude-opus-5-5",
+      "claudeModel": "claude-opus-5-5"
+    },
+    {
+      "id": "claude-sonnet-5-5",
+      "claudeModel": "claude-sonnet-5-5"
+    },
+    {
+      "id": "claude-haiku-5-5",
+      "claudeModel": "claude-haiku-5-5"
+    },
+    {
+      "id": "claude-fable-5-1",
+      "claudeModel": "claude-fable-5-1"
+    },
+    {
+      "id": "claude-fable-5",
+      "claudeModel": "claude-fable-5"
+    },
+    {
+      "id": "claude-opus-5",
+      "claudeModel": "claude-opus-5"
+    },
+    {
+      "id": "claude-sonnet-5",
+      "claudeModel": "claude-sonnet-5"
+    },
+    {
+      "id": "claude-opus-4-8",
+      "claudeModel": "claude-opus-4-8"
+    },
+    {
+      "id": "claude-opus-4-7",
+      "claudeModel": "claude-opus-4-7"
+    },
+    {
+      "id": "claude-opus-4-6",
+      "claudeModel": "claude-opus-4-6"
+    },
+    {
+      "id": "claude-sonnet-4-6",
+      "claudeModel": "claude-sonnet-4-6"
+    },
+    {
+      "id": "claude-opus-4-5",
+      "claudeModel": "claude-opus-4-5"
+    },
+    {
+      "id": "claude-sonnet-4-5",
+      "claudeModel": "claude-sonnet-4-5"
+    },
+    {
+      "id": "claude-haiku-4-5",
+      "claudeModel": "claude-haiku-4-5"
+    }
+  ],
+  "defaultModel": "claude-sonnet-5-5",
+  "thinkingDisplay": "summarized",
+  "defaultEffort": "medium",
+  "adjustments": "report",
+  "retention": {
+    "forkTtlMinutes": 60,
+    "headTtlDays": 7,
+    "sweepIntervalMinutes": 10
+  },
+  "concurrency": {
+    "maxActive": 2,
+    "maxQueued": 4,
+    "queueTimeoutMs": 15000
+  },
+  "paths": {
+    "workDir": "/srv/forkline/work",
+    "configDir": "/srv/forkline/claude-config",
+    "database": "/srv/forkline/data/forkline.db"
+  },
+  "timeouts": {
+    "streamIdleMs": 90000,
+    "deadlineMs": 600000
+  },
+  "limits": {
+    "bodyBytes": 10485760
+  },
+  "debug": {
+    "captureBodies": false
+  }
+}
