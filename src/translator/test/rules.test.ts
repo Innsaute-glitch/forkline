@@ -67,7 +67,7 @@ describe('message content', () => {
       { role: 'assistant', content: '' },
       { role: 'assistant', content: '' },
     ]);
-    expect(value.adjustments).toEqual(['system-header-added']);
+    expect(value.adjustments).toEqual(['environment-block-replaced', 'system-header-added']);
   });
 
   it('counts null or missing user content as blank: dropped in history, 400 as the live prompt', () => {
@@ -81,7 +81,13 @@ describe('message content', () => {
     const value = ok(base({}, [{ role: 'system', content: '' }, { role: 'system', content: '  ' }, user('Hi'), { role: 'system', content: '' }]));
     expect(value.systemPrompt.slice(1)).toEqual(['', '  ']);
     expect(value.history).toEqual([{ role: 'system', content: '' }]);
-    expect(value.adjustments).toEqual(['system-header-added', 'trailing-system-moved']);
+    expect(value.adjustments).toEqual(['environment-block-replaced', 'system-header-added', 'trailing-system-moved']);
+  });
+
+  it('reports environment-block-replaced only when there is history', () => {
+    expect(ok(base({}, [user('Hi')])).adjustments).not.toContain('environment-block-replaced');
+    expect(ok(base({}, [user(' '), user('Hi')])).adjustments).not.toContain('environment-block-replaced');
+    expect(ok(base({}, [{ role: 'assistant', content: 'A' }, user('Hi')])).adjustments).toContain('environment-block-replaced');
   });
 
   it('drops whitespace-only system messages from history and reports it', () => {
@@ -459,6 +465,7 @@ describe('adjustments list', () => {
     expect(value.adjustments).toEqual([
       'blank-user-dropped',
       'effort-mapped',
+      'environment-block-replaced',
       'model-defaulted',
       'reasoning-replay-ignored',
       'system-header-added',

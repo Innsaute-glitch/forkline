@@ -30,6 +30,7 @@
   },
   "adjustments": [
     "blank-user-dropped",
+    "environment-block-replaced",
     "max-tokens-capped",
     "model-defaulted",
     "system-header-added",

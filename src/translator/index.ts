@@ -17,7 +17,13 @@ export function translate(request: ChatRequest, config: Config): TranslateResult
   if (!resolved.ok) return resolved;
 
   const adjustments = [
-    ...new Set([ADJUSTMENT.systemHeaderAdded, ...split.value.adjustments, ...resolved.value.adjustments]),
+    ...new Set([
+      ADJUSTMENT.systemHeaderAdded,
+      // The router replaces this text only on a rebuilt chat, which is any non-empty history.
+      ...(split.value.history.length > 0 ? [ADJUSTMENT.environmentBlockReplaced] : []),
+      ...split.value.adjustments,
+      ...resolved.value.adjustments,
+    ]),
   ].sort();
 
   if (config.adjustments === 'reject') {

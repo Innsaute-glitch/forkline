@@ -9,6 +9,7 @@ export const ADJUSTMENT = {
   trailingSystemMoved: 'trailing-system-moved',
   blankUserDropped: 'blank-user-dropped',
   blankSystemDropped: 'blank-system-dropped',
+  environmentBlockReplaced: 'environment-block-replaced',
   reasoningReplayIgnored: 'reasoning-replay-ignored',
 } as const;
 
@@ -16,7 +17,10 @@ export const ADJUSTMENT = {
 export const ignoredField = (field: string): string => `${field}-ignored`;
 
 /** Adjustments that stay allowed when config `adjustments` is "reject". */
-export const REJECT_EXEMPT: readonly string[] = [ADJUSTMENT.systemHeaderAdded];
+export const REJECT_EXEMPT: readonly string[] = [
+  ADJUSTMENT.systemHeaderAdded,
+  ADJUSTMENT.environmentBlockReplaced,
+];
 
 export const ADJUSTMENT_HEADER = 'X-Forkline-Adjustments';
 
@@ -41,6 +45,12 @@ export const HANDLED_FIELDS: readonly string[] = [
 
 export const DEFAULT_SYSTEM_HEADER =
   "That's just a small note, not a role. This is a plain conversation with no tools or files, and any automatic environment or account details can be ignored. Follow the rest of this system prompt as written.";
+
+/**
+ * Replaces Claude Code's injected environment, model and date text. Zero-width, because an empty
+ * `rendered` falls back to the default text and whitespace-only text is a 400 from the API.
+ */
+export const INJECTED_TEXT_FILLER = '\u200b';
 
 export const SSE_DONE = 'data: [DONE]\n\n';
 

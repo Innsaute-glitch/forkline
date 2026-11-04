@@ -1,5 +1,6 @@
 // Transcript entries for rebuilt history (case D). Templates: research-notes.md section 4.
 import type { SessionStoreEntry } from '@anthropic-ai/claude-agent-sdk';
+import { INJECTED_TEXT_FILLER } from '../constants.js';
 import type { HistoryItem, MessageContent } from '../types.js';
 
 export interface EntryContext {
@@ -79,6 +80,63 @@ export function buildEntries(history: HistoryItem[], ctx: EntryContext): Session
       });
     }
     parentUuid = uuid;
+  }
+  return entries;
+}
+
+/** What Claude Code would report itself. It compares these exactly before skipping its own text. */
+export interface SeedFacts {
+  workDir: string;
+  platform: string;
+  osVersion: string;
+  /** Local date, YYYY-MM-DD. */
+  today: string;
+  /** Null leaves Claude Code's model line in the request. */
+  identity: { modelId: string; marketingName: string; knowledgeCutoff: string } | null;
+}
+
+/**
+ * Entries that make Claude Code treat its environment, model and date text as already sent, with
+ * filler rendered in its place. Goes after the history, chained from `parentUuid`.
+ */
+export function buildSeedEntries(
+  parentUuid: string | null,
+  facts: SeedFacts,
+  ctx: EntryContext,
+): SessionStoreEntry[] {
+  const attachments: Record<string, unknown>[] = [
+    {
+      type: 'environment',
+      snapshot: {
+        workingDirectory: facts.workDir,
+        isWorktree: false,
+        isGitRepo: false,
+        additionalWorkingDirectories: [],
+        platform: facts.platform,
+        // The env allow-list withholds SHELL, so Claude Code falls back to bash.
+        shell: 'bash',
+        osVersion: facts.osVersion,
+      },
+    },
+  ];
+  if (facts.identity) attachments.push({ type: 'model', identity: facts.identity });
+  attachments.push({ type: 'date', date: facts.today });
+
+  const entries: SessionStoreEntry[] = [];
+  let parent = parentUuid;
+  for (const attachment of attachments) {
+    const uuid = ctx.newUuid();
+    entries.push({
+      parentUuid: parent,
+      uuid,
+      timestamp: ctx.now(),
+      sessionId: ctx.sessionId,
+      type: 'attachment',
+      attachment,
+      rendered: [{ content: INJECTED_TEXT_FILLER }],
+      renderedRole: 'system',
+    });
+    parent = uuid;
   }
   return entries;
 }

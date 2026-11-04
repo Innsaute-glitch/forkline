@@ -31,6 +31,12 @@ const fileSchema = z
           claudeModel: z.string().min(1),
           /** Model's output ceiling, used to report max-tokens-capped. */
           maxOutputTokens: positiveInt.optional(),
+          /**
+           * Claude Code's own name and cutoff for this model. Both must match exactly for its
+           * model line to be replaced; without them that line stays in the request.
+           */
+          marketingName: z.string().min(1).optional(),
+          knowledgeCutoff: z.string().min(1).optional(),
         }),
       )
       .min(1),

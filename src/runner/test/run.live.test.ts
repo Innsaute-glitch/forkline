@@ -54,7 +54,10 @@ const children = (): string[] => {
 beforeAll(() => {
   root = mkdtempSync(join(tmpdir(), 'forkline-live-'));
   mkdirSync(join(root, 'work'));
-  const raw = readFixture<Record<string, unknown>>('golden/config.json');
+  const raw = readFixture<{ models: Record<string, unknown>[] } & Record<string, unknown>>('golden/config.json');
+  for (const model of raw.models) {
+    if (model.claudeModel === HAIKU) Object.assign(model, { marketingName: 'Haiku 5.5', knowledgeCutoff: 'June 2026' });
+  }
   raw.paths = { workDir: join(root, 'work'), configDir: join(root, 'config'), database: join(root, 'db') };
   config = parseConfig(raw, { [ENV.apiKey]: 'live-test-key-0123456789', [ENV.claudeToken]: process.env[ENV.claudeToken] ?? '' });
 });
@@ -123,6 +126,16 @@ describe.skipIf(!process.env[ENV.claudeToken])('runner against real Claude Code 
     };
     const { events } = await go(t, undefined, lying);
     expect(events).toEqual([{ type: 'error', error: expect.objectContaining({ code: 'model-mismatch', status: 502 }) }]);
+  });
+
+  it('keeps the environment, model and date text out of a rebuilt chat', async () => {
+    const { events, plan } = await go(translated('edit'));
+    expect(events.at(-1)?.type).toBe('finished');
+    const entries = (await plan.sessionStore.load({ projectKey: 'x', sessionId: plan.sessionId })) ?? [];
+    const count = (kind: string) =>
+      entries.filter((entry) => (entry.attachment as { type?: string } | undefined)?.type === kind).length;
+    // Exactly our seeds: Claude Code added none of its own.
+    expect([count('environment'), count('model'), count('date')]).toEqual([1, 1, 1]);
   });
 
   it('sends /help to the model as written', async () => {

@@ -45,6 +45,7 @@
     "includeUsage": true
   },
   "adjustments": [
+    "environment-block-replaced",
     "max-tokens-capped",
     "model-defaulted",
     "system-header-added",

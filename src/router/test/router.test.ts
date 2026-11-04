@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { INJECTED_TEXT_FILLER } from '../../constants.js';
 import { createLogger } from '../../logger.js';
 import { goldenConfig, readFixture } from '../../test/helpers.js';
 import type { TranslatedRequest } from '../../types.js';
@@ -25,8 +26,27 @@ describe('router v0', () => {
     expect(plan.resume).toBe(plan.sessionId);
     expect(plan.lockKey).toBeNull();
     const entries = await plan.sessionStore.load({ projectKey: 'ignored', sessionId: plan.sessionId });
-    expect(entries).toHaveLength(t.history.length);
+    // goldenConfig has no model identity, so the seeds are environment and date only.
+    expect(entries).toHaveLength(t.history.length + 2);
     expect(entries?.[0]).toMatchObject({ sessionId: plan.sessionId, parentUuid: null });
+  });
+
+  it('chains seeds after the history, using the model identity from config', async () => {
+    const config = goldenConfig();
+    config.models[0] = { ...config.models[0]!, marketingName: 'Sonnet 5.5', knowledgeCutoff: 'June 2026' };
+    const t = readFixture<TranslatedRequest>('golden/translated/edit.json');
+    const plan = await createRouter(config, createLogger('silent')).route(t);
+    const entries = (await plan.sessionStore.load({ projectKey: 'x', sessionId: plan.sessionId }))!;
+    const seeds = entries.slice(t.history.length);
+    const attachment = (index: number) => seeds[index]!.attachment as Record<string, unknown>;
+    expect(seeds.map((seed) => attachment(seeds.indexOf(seed)).type)).toEqual(['environment', 'model', 'date']);
+    expect(attachment(1).identity).toEqual({ modelId: t.claudeModel, marketingName: 'Sonnet 5.5', knowledgeCutoff: 'June 2026' });
+    expect(attachment(2).date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    for (const [index, seed] of seeds.entries()) {
+      expect(seed.parentUuid).toBe(entries[t.history.length + index - 1]!.uuid);
+      expect(seed.rendered).toEqual([{ content: INJECTED_TEXT_FILLER }]);
+      expect(seed.renderedRole).toBe('system');
+    }
   });
 
   it('gives each request its own session and store, also after forceRebuild', async () => {
