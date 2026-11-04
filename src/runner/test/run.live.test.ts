@@ -58,7 +58,7 @@ beforeAll(() => {
   for (const model of raw.models) {
     if (model.claudeModel === HAIKU) Object.assign(model, { marketingName: 'Haiku 5.5', knowledgeCutoff: 'June 2026' });
   }
-  raw.paths = { workDir: join(root, 'work'), configDir: join(root, 'config'), database: join(root, 'db') };
+  raw.paths = { workDir: join(root, 'work'), configDir: join(root, 'config') };
   config = parseConfig(raw, { [ENV.apiKey]: 'live-test-key-0123456789', [ENV.claudeToken]: process.env[ENV.claudeToken] ?? '' });
 });
 afterAll(async () => { await childrenGone(); });

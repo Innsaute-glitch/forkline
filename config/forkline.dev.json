@@ -105,8 +105,7 @@
   },
   "paths": {
     "workDir": "~/.forkline-dev/work",
-    "configDir": "~/.forkline-dev/claude-config",
-    "database": "~/.forkline-dev/forkline.db"
+    "configDir": "~/.forkline-dev/claude-config"
   },
   "timeouts": {
     "streamIdleMs": 90000,

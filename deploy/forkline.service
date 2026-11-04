@@ -1,0 +1,77 @@
+[Unit]
+Description=Forkline (OpenAI-compatible bridge over Claude Code)
+After=network-online.target tailscaled.service
+Wants=network-online.target tailscaled.service
+# The server binds to the Tailscale IP. If tailscaled is slow after boot, the first start fails and
+# Restart= below tries again, so allow many attempts before systemd gives up.
+StartLimitIntervalSec=600
+StartLimitBurst=30
+
+[Service]
+Type=simple
+User=forkline
+Group=forkline
+WorkingDirectory=/srv/forkline/app
+
+# Without FORKLINE_CONFIG the server would fall back to the dev config. Keep this line.
+Environment=FORKLINE_CONFIG=/etc/forkline/forkline.json
+Environment=NODE_ENV=production
+# The Claude Code subprocess receives only PATH, HOME, LANG and TZ from here, plus what Forkline sets.
+# TZ is fixed so the date Forkline writes and the date Claude Code sees can never disagree.
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+Environment=HOME=/srv/forkline/home
+Environment=LANG=C.UTF-8
+Environment=TZ=UTC
+# FORKLINE_API_KEY and FORKLINE_CLAUDE_TOKEN. Root-owned, mode 0600; systemd reads it before dropping privileges.
+EnvironmentFile=/etc/forkline/forkline.env
+
+ExecStart=/opt/forkline-node/bin/node /srv/forkline/app/dist/main.js
+Restart=on-failure
+RestartSec=5
+# The server waits 10 s for running requests on SIGTERM, then aborts the rest.
+TimeoutStopSec=30
+# Stopping kills the whole control group, so no claude process outlives the service.
+KillMode=control-group
+SyslogIdentifier=forkline
+
+# --- Hardening -------------------------------------------------------------------------------
+NoNewPrivileges=true
+# Private /tmp: Claude Code writes temporary resume files holding chat text there while a run is
+# active. They stay invisible to other processes and vanish when the service stops.
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+# The only places the service may write. app/ and /etc/forkline stay read-only.
+ReadWritePaths=/srv/forkline/work /srv/forkline/claude-config /srv/forkline/home
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+ProtectProc=invisible
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+LockPersonality=true
+SystemCallArchitectures=native
+CapabilityBoundingSet=
+AmbientCapabilities=
+UMask=0077
+RemoveIPC=true
+TasksMax=512
+
+# Deliberately NOT set:
+# - MemoryDenyWriteExecute: Node's V8 and the bundled native Claude Code binary are JIT
+#   compilers and need memory that is writable and executable. Setting it makes them crash at
+#   start. The other lines here (no capabilities, read-only filesystem, no new privileges)
+#   already limit what a compromised process could do.
+# - SystemCallFilter: a filter that is too tight breaks the native binary in ways that are hard
+#   to see. It can be tried after the first working run, see RUNBOOK.md ("Optional tightening").
+# - ProcSubset=pid: Node reads /proc/meminfo and /proc/cpuinfo.
+# - IPAddressDeny / network filters: the service must reach Anthropic by host name.
+
+[Install]
+WantedBy=multi-user.target

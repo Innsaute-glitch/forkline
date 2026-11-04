@@ -19,7 +19,7 @@ describe('config', () => {
   });
 
   it('expands ~ in paths', () => {
-    const raw = { ...base(), paths: { workDir: '~/a', configDir: '/b', database: '/c' } };
+    const raw = { ...base(), paths: { workDir: '~/a', configDir: '/b' } };
     expect(parseConfig(raw, TEST_ENV).paths.workDir).not.toContain('~');
   });
 

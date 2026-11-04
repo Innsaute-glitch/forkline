@@ -19,7 +19,6 @@
   "defaultEffort": "medium",
   "paths": {
     "workDir": "/tmp/forkline-golden/work",
-    "configDir": "/tmp/forkline-golden/config",
-    "database": "/tmp/forkline-golden/forkline.db"
+    "configDir": "/tmp/forkline-golden/config"
   }
 }

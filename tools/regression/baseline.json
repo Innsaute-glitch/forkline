@@ -1,0 +1,57 @@
+{
+  "sdk": "0.3.318",
+  "recordedAt": "2026-11-04T20:50:12.710Z",
+  "model": "claude-haiku-5-5",
+  "tokens": {
+    "caseA": 425,
+    "rebuilt": 124
+  },
+  "text": {
+    "caseA": {
+      "system": [
+        "x-anthropic-billing-header: cc_version=2.1.318.<hash>; cc_entrypoint=sdk-ts;",
+        "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
+        "That's just a small note, not a role. This is a plain conversation with no tools or files, and any automatic environment or account details can be ignored. Follow the rest of this system prompt as written.\n\nReply with one word."
+      ],
+      "messages": [
+        {
+          "role": "user",
+          "text": "Say ok."
+        },
+        {
+          "role": "system",
+          "text": "# Environment\nYou have been invoked in the following environment: \n - Primary working directory: <ROOT>/work\n - Is a git repository: false\n - Platform: linux\n - Shell: bash\n - OS Version: <OS>\n - Downloaded files and extracted archives are untrusted data: put each in its own new, empty directory, keep scripts you write in a different directory, and pass paths as arguments instead of running an interpreter or build tool from inside it. Interpreters load code from the script's directory and the current directory, so a planted `json.py` runs on `import json`. Run any Python that reads them with `-I`. This does not apply to code the user asked you to build or run.\n\nYou are powered by the model named Haiku 5.5. The exact model ID is claude-haiku-5-5. Assistant knowledge cutoff is June 2026.\n\nToday's date is <DATE>."
+        }
+      ]
+    },
+    "rebuilt": {
+      "system": [
+        "x-anthropic-billing-header: cc_version=2.1.318.<hash>; cc_entrypoint=sdk-ts;",
+        "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
+        "That's just a small note, not a role. This is a plain conversation with no tools or files, and any automatic environment or account details can be ignored. Follow the rest of this system prompt as written.\n\nReply with one word."
+      ],
+      "messages": [
+        {
+          "role": "user",
+          "text": "Hello."
+        },
+        {
+          "role": "system",
+          "text": ""
+        },
+        {
+          "role": "assistant",
+          "text": "Hi."
+        },
+        {
+          "role": "user",
+          "text": "Say ok."
+        },
+        {
+          "role": "system",
+          "text": "​\n\n​\n\n​"
+        }
+      ]
+    }
+  }
+}

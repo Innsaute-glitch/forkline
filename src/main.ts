@@ -4,6 +4,7 @@ import { buildServer } from './http/server.js';
 import { createLogger } from './logger.js';
 import { createRouter } from './router/index.js';
 import { run } from './runner/index.js';
+import { removeAllLocalTranscripts } from './runner/local-transcript.js';
 
 const log = createLogger();
 
@@ -22,6 +23,8 @@ try {
 // The Claude Code subprocess runs in workDir with configDir as its CLAUDE_CONFIG_DIR.
 mkdirSync(config.paths.workDir, { recursive: true, mode: 0o700 });
 mkdirSync(config.paths.configDir, { recursive: true, mode: 0o700 });
+// Anything left here came from a crash; nothing is running yet.
+removeAllLocalTranscripts(config.paths.configDir);
 
 const router = createRouter(config, log);
 const app = buildServer({ config, log, router, run });

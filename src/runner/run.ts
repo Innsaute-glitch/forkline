@@ -5,6 +5,7 @@ import { bridgeError } from '../errors.js';
 import { createLogger, type Logger } from '../logger.js';
 import type { RoutePlan, RunEvent, TokenUsage, TranslatedRequest } from '../types.js';
 import { servedModelMatches } from './guard.js';
+import { removeLocalTranscript } from './local-transcript.js';
 import { buildPrompt, buildQueryOptions } from './options.js';
 import {
   classifyOutcome,
@@ -55,6 +56,21 @@ function resultFacts(m: Extract<SDKMessage, { type: 'result' }>): ResultFacts {
     message: m.subtype === 'success' ? m.result : (errors[0] ?? ''),
     usage: usageOf(m.usage),
   };
+}
+
+/** An aborted subprocess takes a few seconds to exit and can still write, so look again after that. */
+const LATE_WRITE_MS = 10_000;
+
+function removeTranscript(configDir: string, sessionId: string): void {
+  const remove = (): void => {
+    try {
+      removeLocalTranscript(configDir, sessionId);
+    } catch (cause) {
+      log().warn({ sessionId, error: cause instanceof Error ? cause.message : 'unknown' }, 'cannot remove local transcript');
+    }
+  };
+  remove();
+  setTimeout(remove, LATE_WRITE_MS).unref();
 }
 
 /**
@@ -179,6 +195,7 @@ export async function* run(input: RunInput, queryFn: QueryFn = sdkQuery): AsyncG
     signal.removeEventListener('abort', onSignal);
     abort.abort();
     query?.close();
+    removeTranscript(config.paths.configDir, plan.sessionId);
   }
 
   if (signal.aborted) return;

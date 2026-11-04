@@ -62,7 +62,6 @@ const fileSchema = z
     paths: z.strictObject({
       workDir: z.string().min(1),
       configDir: z.string().min(1),
-      database: z.string().min(1),
     }),
     timeouts: z
       .strictObject({
@@ -127,7 +126,6 @@ export function parseConfig(raw: unknown, env: NodeJS.ProcessEnv, baseDir = proc
     paths: {
       workDir: expandPath(paths.workDir, baseDir),
       configDir: expandPath(paths.configDir, baseDir),
-      database: expandPath(paths.database, baseDir),
     },
     secrets: { apiKey, claudeToken },
   };
