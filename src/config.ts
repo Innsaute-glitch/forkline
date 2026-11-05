@@ -36,6 +36,8 @@ const fileSchema = z
            * model line to be replaced; without them that line stays in the request.
            */
           marketingName: z.string().min(1).optional(),
+          /** Claude Code folds system entries into the user message for this model. */
+          foldsSystemMessages: z.boolean().optional(),
           knowledgeCutoff: z.string().min(1).optional(),
         }),
       )

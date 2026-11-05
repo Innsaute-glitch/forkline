@@ -171,6 +171,12 @@ export function splitMessages(raw: unknown): Result<SplitMessages> {
     if (message.hasReasoning) adjustments.add(ADJUSTMENT.reasoningReplayIgnored);
     history.push({ role: message.role, content: message.content });
   }
+  // In the request a system message can only follow a user message. One directly before a user
+  // message lands after it. Trailing ones are excluded: they land where the client put them.
+  const shifted = history.some(
+    (item, index) => item.role === 'system' && (history[index + 1]?.role ?? 'user') === 'user',
+  );
+  if (shifted) adjustments.add(ADJUSTMENT.systemPositionChanged);
   if (trailing.length > 0) {
     adjustments.add(ADJUSTMENT.trailingSystemMoved);
     for (const message of trailing) {
@@ -178,6 +184,10 @@ export function splitMessages(raw: unknown): Result<SplitMessages> {
       else history.push({ role: 'system', content: message.content });
     }
   }
+
+  // With no user message before it, Claude Code wraps a system entry as a user message and adds a
+  // made-up assistant turn.
+  if (history[0]?.role === 'system') adjustments.add(ADJUSTMENT.systemPositionChanged);
 
   return {
     ok: true,

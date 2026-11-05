@@ -10,6 +10,7 @@ export const ADJUSTMENT = {
   blankUserDropped: 'blank-user-dropped',
   blankSystemDropped: 'blank-system-dropped',
   environmentBlockReplaced: 'environment-block-replaced',
+  systemPositionChanged: 'system-position-changed',
   reasoningReplayIgnored: 'reasoning-replay-ignored',
 } as const;
 

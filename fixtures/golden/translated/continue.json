@@ -45,6 +45,7 @@
     "max-tokens-capped",
     "model-defaulted",
     "system-header-added",
+    "system-position-changed",
     "temperature-ignored",
     "tools-ignored",
     "top_p-ignored"

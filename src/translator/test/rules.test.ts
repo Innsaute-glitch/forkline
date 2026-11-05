@@ -81,13 +81,43 @@ describe('message content', () => {
     const value = ok(base({}, [{ role: 'system', content: '' }, { role: 'system', content: '  ' }, user('Hi'), { role: 'system', content: '' }]));
     expect(value.systemPrompt.slice(1)).toEqual(['', '  ']);
     expect(value.history).toEqual([{ role: 'system', content: '' }]);
-    expect(value.adjustments).toEqual(['environment-block-replaced', 'system-header-added', 'trailing-system-moved']);
+    expect(value.adjustments).toEqual(['environment-block-replaced', 'system-header-added', 'system-position-changed', 'trailing-system-moved']);
   });
 
   it('reports environment-block-replaced only when there is history', () => {
     expect(ok(base({}, [user('Hi')])).adjustments).not.toContain('environment-block-replaced');
     expect(ok(base({}, [user(' '), user('Hi')])).adjustments).not.toContain('environment-block-replaced');
     expect(ok(base({}, [{ role: 'assistant', content: 'A' }, user('Hi')])).adjustments).toContain('environment-block-replaced');
+  });
+
+  describe('system-position-changed', () => {
+    const a = (content: string) => ({ role: 'assistant', content });
+    const s = (content: string) => ({ role: 'system', content });
+    const flag = 'system-position-changed';
+
+    it('fires for a system message directly before a user message, at any depth', () => {
+      expect(ok(base({}, [a('G'), s('N'), user('U1'), a('A1'), user('U2')])).adjustments).toContain(flag);
+      expect(ok(base({}, [user('U1'), a('A1'), s('N'), user('U2')])).adjustments).toContain(flag);
+    });
+
+    it('stays quiet when the message keeps its place', () => {
+      expect(ok(base({}, [user('U1'), s('N'), a('A1'), user('U2')])).adjustments).not.toContain(flag);
+      expect(ok(base({}, [a('G'), user('U1'), a('A1'), user('U2'), s('Lore')])).adjustments).not.toContain(flag);
+    });
+
+    it('fires when no user message comes before the system message', () => {
+      expect(ok(base({}, [user('U1'), s('Lore')])).adjustments).toContain(flag);
+    });
+
+    it('fires for any history system message on a model that folds them', () => {
+      const config = goldenConfig();
+      config.models[0] = { ...config.models[0]!, foldsSystemMessages: true };
+      const request = { model: config.models[0].id, messages: [user('U1'), s('N'), a('A1'), user('U2')] };
+      const result = translate(request, config);
+      expect(result.ok && result.value.adjustments).toContain(flag);
+      const noSystem = translate({ model: config.models[0].id, messages: [a('A'), user('U')] }, config);
+      expect(noSystem.ok && noSystem.value.adjustments).not.toContain(flag);
+    });
   });
 
   it('drops whitespace-only system messages from history and reports it', () => {

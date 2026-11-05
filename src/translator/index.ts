@@ -16,9 +16,14 @@ export function translate(request: ChatRequest, config: Config): TranslateResult
   const resolved = resolveParams(request, config);
   if (!resolved.ok) return resolved;
 
+  const folds =
+    split.value.history.some((item) => item.role === 'system') &&
+    config.models.find((model) => model.claudeModel === resolved.value.claudeModel)?.foldsSystemMessages === true;
+
   const adjustments = [
     ...new Set([
       ADJUSTMENT.systemHeaderAdded,
+      ...(folds ? [ADJUSTMENT.systemPositionChanged] : []),
       // The router replaces this text only on a rebuilt chat, which is any non-empty history.
       ...(split.value.history.length > 0 ? [ADJUSTMENT.environmentBlockReplaced] : []),
       ...split.value.adjustments,

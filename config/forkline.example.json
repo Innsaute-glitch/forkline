@@ -65,42 +65,48 @@
       "claudeModel": "claude-opus-4-7",
       "marketingName": "Opus 4.7",
       "knowledgeCutoff": "January 2026",
-      "maxOutputTokens": 128000
+      "maxOutputTokens": 128000,
+      "foldsSystemMessages": true
     },
     {
       "id": "claude-opus-4-6",
       "claudeModel": "claude-opus-4-6",
       "marketingName": "Opus 4.6",
       "knowledgeCutoff": "May 2025",
-      "maxOutputTokens": 128000
+      "maxOutputTokens": 128000,
+      "foldsSystemMessages": true
     },
     {
       "id": "claude-sonnet-4-6",
       "claudeModel": "claude-sonnet-4-6",
       "marketingName": "Sonnet 4.6",
       "knowledgeCutoff": "August 2025",
-      "maxOutputTokens": 128000
+      "maxOutputTokens": 128000,
+      "foldsSystemMessages": true
     },
     {
       "id": "claude-opus-4-5",
       "claudeModel": "claude-opus-4-5",
       "marketingName": "Opus 4.5",
       "knowledgeCutoff": "May 2025",
-      "maxOutputTokens": 64000
+      "maxOutputTokens": 64000,
+      "foldsSystemMessages": true
     },
     {
       "id": "claude-sonnet-4-5",
       "claudeModel": "claude-sonnet-4-5",
       "marketingName": "Sonnet 4.5",
       "knowledgeCutoff": "January 2025",
-      "maxOutputTokens": 64000
+      "maxOutputTokens": 64000,
+      "foldsSystemMessages": true
     },
     {
       "id": "claude-haiku-4-5",
       "claudeModel": "claude-haiku-4-5",
       "marketingName": "Haiku 4.5",
       "knowledgeCutoff": "February 2025",
-      "maxOutputTokens": 64000
+      "maxOutputTokens": 64000,
+      "foldsSystemMessages": true
     }
   ],
   "defaultModel": "claude-sonnet-5-5",
