@@ -2,6 +2,7 @@
   "name": "forkline",
   "version": "0.0.0",
   "private": true,
+  "license": "PolyForm-Noncommercial-1.0.0",
   "description": "Personal OpenAI-compatible bridge over the Claude Agent SDK",
   "type": "module",
   "engines": {
