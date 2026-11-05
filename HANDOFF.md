@@ -30,7 +30,8 @@ These are decisions, not suggestions. Don't change them without asking.
 10. **Live calls:** Haiku (`claude-haiku-5-5`) freely, but keep prompts small. An agent once sent a 414k-token prompt, and that burned real limits. Other models only for the check that each model is served as requested, or with the owner's OK. Stop on a usage-limit error rather than retrying.
 11. **Ask first** before anything costly or public: pushing, touching the VPS, or sending anything outside this machine.
 12. **Never put private content in tracked files.** Fixtures are invented. No real chat text, character names, IP addresses or secrets.
-13. **Write plainly.** The owner dislikes stock AI phrasing, and specifically the word "caveats".
+13. **Keep the README general.** Roleplay is the owner's own use case, so public docs describe a general chat bridge.
+14. **Write plainly.** The owner dislikes stock AI phrasing, and specifically the word "caveats".
 
 ## Files you may not have
 

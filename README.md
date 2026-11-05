@@ -2,7 +2,7 @@
 
 A small personal server that gives OpenAI-compatible chat clients access to Claude through your own Claude subscription.
 
-Forkline exposes `/v1/chat/completions` and `/v1/models`. Each request is answered by the official Claude Code program, run through the [Claude Agent SDK](https://www.npmjs.com/package/@anthropic-ai/claude-agent-sdk). It was built for roleplay clients such as [Lumiverse](https://github.com/prolix-oc/Lumiverse), but any client that speaks the OpenAI chat format can use it.
+Forkline exposes `/v1/chat/completions` and `/v1/models`. Each request is answered by the official Claude Code program, run through the [Claude Agent SDK](https://www.npmjs.com/package/@anthropic-ai/claude-agent-sdk). Any client that speaks the OpenAI chat format can use it. It has been tested with [Lumiverse](https://github.com/prolix-oc/Lumiverse).
 
 > Forkline is an independent project. It is not made by, endorsed by, or affiliated with Anthropic. "Claude" and "Claude Code" are Anthropic's trademarks.
 
@@ -30,10 +30,10 @@ Forkline rebuilds every request and stores no chats. Prompt caching works on con
 
 | Action | Prompt read from cache |
 |---|---|
-| Swipe (identical request) | 100% |
-| Next turn, with a lorebook block after the latest message | 84% |
+| Regenerate (identical request) | 100% |
+| Next turn, with extra context after the latest message | 84% |
 | Edit an earlier message | 48% (the system prompt) |
-| Change the preset | 0% |
+| Change the system prompt | 0% |
 
 [docs/task-5-store-design.md](docs/task-5-store-design.md) explains why there is no session store, and when one would be worth adding.
 
@@ -83,7 +83,7 @@ Claude Code adds its own text to every session. On Claude Code 2.1.318 with a `s
 
 The environment text lands right after the latest message, where it can distract the model. Forkline adds Claude Code's own `environment`, `model` and `date` entries to the rebuilt transcript with a zero-width character as their text. Claude Code compares the data in those entries, finds nothing to add, and sends the replacement. That saves about 360 tokens per request and leaves your latest message as the last thing the model reads, apart from any system messages your client put there.
 
-As a result the model doesn't know the date, its working folder, or its exact model name. If your preset needs the date, have your client supply it.
+As a result the model doesn't know the date, its working folder, or its exact model name. If your prompt needs the date, have your client supply it.
 
 ## Requirements
 
@@ -176,8 +176,8 @@ Every route needs `Authorization: Bearer <FORKLINE_API_KEY>`. Errors look like t
 
 **Model behaviour**
 - Fable 5.1, Fable 5, Opus 5.5, Opus 5, Sonnet 5.5 and Haiku 5.5 have safety classifiers that can decline harmless requests. The client sees `finish_reason: content_filter` and no reply. The log has a `model refused` line with the category.
-- `reasoning_extraction` is a common cause with roleplay presets. It fires on prompts that ask the model to write its thinking or plan into the reply. Remove that instruction, and use the reasoning Forkline already streams.
-- A short note arriving alone after the latest message can be ignored. In testing, a one-sentence note in that position was often missed, while a realistic lorebook of 13 entries was used every time. Headings help.
+- `reasoning_extraction` is a common cause. It fires on prompts that ask the model to write its thinking or plan into the reply. Remove that instruction, and use the reasoning Forkline already streams.
+- A short note arriving alone after the latest message can be ignored. In testing, a one-sentence note in that position was often missed, while a block of 13 entries was used every time. Headings help.
 
 **Message layout**
 - In the request, a system message can only sit right after a user message. One placed directly before a user message lands just after it, and `system-position-changed` reports this.
@@ -197,18 +197,18 @@ Every route needs `Authorization: Bearer <FORKLINE_API_KEY>`. Errors look like t
 - Client token counters can read low. Claude 4.7 and later models use a tokenizer that produces about 30% more tokens for the same text.
 - Forkline has only been tested with Lumiverse.
 
-### Where to put lorebook entries
+### Where to put context that changes
 
-Everything after a change in the prompt has to be rewritten to the cache, so placement matters. Measured on a 17k-token synthetic chat with Haiku 5.5:
+Clients often add extra context that changes between turns, such as retrieved notes. Everything after a change in the prompt has to be rewritten to the cache, so placement matters. Measured on a 17k-token synthetic chat with Haiku 5.5:
 
-| Placement | Cached, same lorebook | Cached, one entry changed |
+| Placement | Cached, same context | Cached, one entry changed |
 |---|---|---|
 | With the system prompt | 100% | 0% |
-| Right after the greeting | 100% | 47% |
+| After the first message | 100% | 47% |
 | After the latest message | 84% | 84% |
 | After the previous user message | 47% | 47% |
 
-Constant entries work best near the top. Entries that change suit the end, where the cost stays flat as a chat grows.
+Constant context works best near the top. Context that changes suits the end, where the cost stays flat as a chat grows.
 
 ## Deployment
 
