@@ -68,6 +68,7 @@ Forkline forwards what the client sent. Anything it has to change is listed in t
 | `blank-user-dropped` | A blank user message in the history was removed, because the API rejects it |
 | `blank-system-dropped` | A whitespace-only system message in the history was removed, for the same reason |
 | `reasoning-replay-ignored` | Reasoning resent on an assistant message was ignored |
+| `continue-nudge-as-user` | A system message after a final assistant message was sent as the user's message, so a client's Continue action works |
 
 ## What Claude Code adds to the prompt
 
@@ -188,6 +189,7 @@ Every route needs `Authorization: Bearer <FORKLINE_API_KEY>`. Errors look like t
 **Parameters and models**
 - `temperature`, `top_p`, `seed` and other sampling fields have no effect. Claude Code offers no such controls.
 - `n` above 1, `response_format`, tool calls and assistant prefill are rejected with a 400.
+- Claude Code can't resume partway through a reply. A client's Continue action asks the model to carry on instead, so a sentence cut off mid-word may not join perfectly.
 - A reply that runs over `max_tokens` is an error, not a cut-off reply, and thinking counts towards the limit.
 - Remote image URLs are never fetched.
 - Fable models need usage credits. Without them, requests return a 429.

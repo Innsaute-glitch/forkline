@@ -140,8 +140,18 @@ export function splitMessages(raw: unknown): Result<SplitMessages> {
     firstNonSystem++;
   }
 
-  let liveIndex = -1;
-  for (let i = messages.length - 1; i >= firstNonSystem; i--) {
+  // A client's Continue action ends on the reply to continue, then a system nudge. A resumed turn
+  // must end on a user message, so the last system message becomes the live prompt.
+  const lastIndex = messages.length - 1;
+  let lastNonSystem = lastIndex;
+  while (lastNonSystem >= firstNonSystem && messages[lastNonSystem]!.role === 'system') lastNonSystem--;
+  const continuing =
+    lastNonSystem >= firstNonSystem &&
+    lastNonSystem < lastIndex &&
+    messages[lastNonSystem]!.role === 'assistant';
+
+  let liveIndex = continuing ? lastIndex : -1;
+  for (let i = lastIndex; !continuing && i >= firstNonSystem; i--) {
     if (messages[i]!.role === 'user') {
       liveIndex = i;
       break;
@@ -156,8 +166,12 @@ export function splitMessages(raw: unknown): Result<SplitMessages> {
   }
   const live = messages[liveIndex]!;
   if (live.blank) return fail('the last user message is blank');
+  if (continuing && (live.content as string).trim().length === 0) {
+    return fail('the system message after the last assistant message is blank');
+  }
 
   const adjustments = new Set<string>();
+  if (continuing) adjustments.add(ADJUSTMENT.continueNudgeAsUser);
   const history: HistoryItem[] = [];
   for (const message of messages.slice(firstNonSystem, liveIndex)) {
     if (message.role === 'user' && message.blank) {

@@ -9,7 +9,7 @@ Read this first if you are a new session or a new agent. It should be enough to 
 Last updated 2026-11-05.
 
 - **Status:** v0 is finished and passed a real phone test through Lumiverse on Sonnet 5.5: edits, swipes, continue, stop mid-reply, reasoning display, cache reads and system prompt changes.
-- **Tests at last run:** 284 unit tests, 9 live tests, 16 regression checks, with both Fable models skipped because they need usage credits.
+- **Tests at last run:** 290 unit tests, 9 live tests, 16 regression checks, with both Fable models skipped because they need usage credits.
 - **Engine:** Agent SDK 0.3.318, which bundles Claude Code 2.1.318. The pin is exact.
 - **Not done yet:** the VPS deployment. `deploy/` has never run on a real server.
 - **License:** PolyForm Noncommercial 1.0.0. Say "source-available", never "open source".
@@ -149,6 +149,8 @@ Each of these took measurement. Trust them over intuition, and re-measure after 
 **Short notes after the latest message can be ignored.** One short plain sentence alone in that slot: Haiku 1/5, Sonnet 5.5 0/5. With a `###` heading, 5/5 on both. In a 13-entry lorebook, 15/15. Two messages up, 15/15. More text in the same message helps, and the real environment block used to do that by accident. The owner decided to leave this: it is a model matter.
 
 **Refusals.** Fable, Opus 5 and 5.5, Sonnet 5.5 and Haiku 5.5 have safety classifiers separate from the model. A refusal arrives as `model_refusal_no_fallback` plus `stop_reason: 'refusal'` plus `is_error: true`, with no text, and Forkline reports `content_filter`. `reasoning_extraction` fires when a preset asks for thinking or a plan in the reply; the fix is in the preset. The `model refused` log line has the category.
+
+**Continue.** Lumiverse's real Continue action ends on the assistant reply, then a system nudge, with no user message. A resumed turn must end on a user message, so the translator keeps the reply in history and sends the last system message as the live prompt, reported as `continue-nudge-as-user`. A plain assistant prefill with nothing after it is still a 400. A zero-width user message plus the system nudge was tested instead: the API accepted it, but all 5 Haiku replies began "Mira's voice trailed off" and dropped the sentence, while the nudge as a user message mostly finished it. Lumiverse's Empty Send Nudge is a different path: a user message, which must not be blank or the chat ends on an assistant message and gets a 400.
 
 **Lumiverse.**
 - It treats `length` and `content_filter` as failed generations, and it fails a stream with no `finish_reason`. So stop-string matches end with `stop`.

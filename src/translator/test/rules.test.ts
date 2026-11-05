@@ -90,6 +90,50 @@ describe('message content', () => {
     expect(ok(base({}, [{ role: 'assistant', content: 'A' }, user('Hi')])).adjustments).toContain('environment-block-replaced');
   });
 
+  describe('continue-nudge-as-user', () => {
+    const a = (content: string) => ({ role: 'assistant', content });
+    const s = (content: string) => ({ role: 'system', content });
+    const flag = 'continue-nudge-as-user';
+    const NUDGE = '[Continue your last message.]';
+
+    it('sends a system message after a final assistant message as the live prompt', () => {
+      const value = ok(base({}, [user('Hi'), a('A partial repl'), s(NUDGE)]));
+      expect(value.livePrompt).toEqual({ role: 'user', content: NUDGE });
+      expect(value.history).toEqual([{ role: 'user', content: 'Hi' }, { role: 'assistant', content: 'A partial repl' }]);
+      expect(value.adjustments).toContain(flag);
+    });
+
+    it('keeps earlier system messages in history, and only the last one becomes the prompt', () => {
+      const value = ok(base({}, [user('Hi'), s('Note'), a('Partial'), s('Lore'), s(NUDGE)]));
+      expect(value.livePrompt.content).toBe(NUDGE);
+      expect(value.history.map((item) => item.role)).toEqual(['user', 'system', 'assistant', 'system']);
+    });
+
+    it('works on a greeting with no user message yet', () => {
+      const value = ok(base({}, [a('Greeting'), s(NUDGE)]));
+      expect(value.history).toEqual([{ role: 'assistant', content: 'Greeting' }]);
+      expect(value.livePrompt.content).toBe(NUDGE);
+    });
+
+    it('still rejects a plain assistant prefill and a blank nudge', () => {
+      expect(bad(base({}, [user('Hi'), a('Prefill')])).status).toBe(400);
+      expect(bad(base({}, [user('Hi'), a('Partial'), s('  ')])).status).toBe(400);
+      expect(bad(base({}, [user('Hi'), a('Partial'), s('')])).status).toBe(400);
+    });
+
+    it('leaves normal requests alone', () => {
+      expect(ok(base({}, [user('Hi'), s('Lore')])).adjustments).not.toContain(flag);
+      expect(ok(base({}, [a('G'), user('Hi'), a('A'), user('Next')])).adjustments).not.toContain(flag);
+    });
+
+    it('becomes a 400 when adjustments are rejected', () => {
+      const config = goldenConfig();
+      config.adjustments = 'reject';
+      const result = translate(base({}, [user('Hi'), a('Partial'), s(NUDGE)]), config);
+      expect(result.ok).toBe(false);
+    });
+  });
+
   describe('system-position-changed', () => {
     const a = (content: string) => ({ role: 'assistant', content });
     const s = (content: string) => ({ role: 'system', content });
@@ -200,10 +244,8 @@ describe('message structure', () => {
     expect(value.adjustments).toContain('trailing-system-moved');
   });
 
-  it('rejects an assistant message after the last user message, even with a system after it', () => {
-    expect(
-      bad(base({}, [user('Hi'), { role: 'assistant', content: 'x' }, { role: 'system', content: 's' }])).status,
-    ).toBe(400);
+  it('rejects an assistant message after the last user message', () => {
+    expect(bad(base({}, [user('Hi'), { role: 'assistant', content: 'x' }])).status).toBe(400);
   });
 
   it('rejects a blank last user message even when an earlier user message has text', () => {

@@ -11,6 +11,7 @@ export const ADJUSTMENT = {
   blankSystemDropped: 'blank-system-dropped',
   environmentBlockReplaced: 'environment-block-replaced',
   systemPositionChanged: 'system-position-changed',
+  continueNudgeAsUser: 'continue-nudge-as-user',
   reasoningReplayIgnored: 'reasoning-replay-ignored',
 } as const;
 
