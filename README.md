@@ -89,7 +89,7 @@ As a result the model doesn't know the date, its working folder, or its exact mo
 
 - Node.js 22 (`.nvmrc` holds the exact version)
 - A Claude subscription and a token from `claude setup-token`
-- Linux. It has been tested on x64 only
+- Linux. It has been tested on x64 only. Android through Termux is possible but untested: see [deploy/TERMUX.md](deploy/TERMUX.md)
 
 ## Quick start
 
@@ -213,6 +213,8 @@ Constant entries work best near the top. Entries that change suit the end, where
 ## Deployment
 
 The `deploy/` folder holds an install script, a hardened systemd unit and a runbook for a VPS on Tailscale. Follow [deploy/RUNBOOK.md](deploy/RUNBOOK.md). The pack has passed syntax and unit checks but has not yet been run on a real server.
+
+To run it on an Android phone beside your client, with no server, see [deploy/TERMUX.md](deploy/TERMUX.md). That route is untested.
 
 Never expose Forkline to the public internet. It drives a program on your server with your subscription.
 

@@ -65,7 +65,7 @@ If those files exist, add new findings to `plan-brief.md` as well as here. If th
 | `config/` | Dev and example configs. Models live only here |
 | `fixtures/` | Invented requests, run events and golden output |
 | `tools/regression/` | Live checks. Run before any engine upgrade |
-| `deploy/` | Install script, systemd unit, runbook |
+| `deploy/` | Install script, systemd unit, VPS runbook, and `TERMUX.md` for Android |
 | `docs/task-5-store-design.md` | The dropped session store: why, and when to revisit it |
 
 Toolchain: Node 22 (`.nvmrc`), TypeScript ESM, so relative imports end in `.js`. Tests sit in a `test/` folder beside the code: `*.test.ts`, or `*.live.test.ts` for real calls. Golden tests read `fixtures/golden/`, never live config.
@@ -184,6 +184,7 @@ Don't reopen these without new evidence.
 ## Open items
 
 - **VPS deployment.** The owner follows `deploy/RUNBOOK.md`. Agents never connect to the VPS. Still unverified there: `setup-token` auth, the hardened unit, and whether the injected text stays gone and the email reminder stays absent.
+- **Termux.** `deploy/TERMUX.md` covers running on Android inside `proot-distro` Ubuntu. It has never been run, so arm64, `proot` speed, seeds matching inside `proot` and Android killing the process are all unknown. Plain Termux can't work because Claude Code has no Android build, and patching the binary to load there is ruled out by the owner's rule 2.
 - **The owner's main preset** has planning instructions that trigger `reasoning_extraction`. They plan to rework it.
 - **Fable models** have never run the seeded path, because they need usage credits.
 - **Never seen live:** a context-too-long error, a real usage-limit rejection, a refusal arriving mid-reply. The unit of `resetsAt` is assumed to be seconds.
