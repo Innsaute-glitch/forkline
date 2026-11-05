@@ -16,7 +16,7 @@ Layout:
 | `/etc/forkline/forkline.env` | the two secrets, root only, mode 0600 |
 | `/opt/node-v22.23.3-linux-<cpu>` | Node, linked at `/opt/forkline-node`; the system's own Node is not touched |
 
-Chats are not stored. A chat is rebuilt from what Lumiverse sends on each message. While a reply is running, Claude Code keeps a temporary copy in a `claude-resume-*` folder under `/tmp`; the unit gives the service a private `/tmp` for this (`PrivateTmp=true`) so no other process can read it and it disappears when the service stops.
+Chats are not stored. A chat is rebuilt from what Lumiverse sends on each message. While a reply is running, a temporary copy sits in a `claude-resume-*` folder under `/tmp`; the unit gives the service a private `/tmp` for this (`PrivateTmp=true`) so no other process can read it and it disappears when the service stops.
 
 ## 1. Before you start
 
@@ -99,7 +99,7 @@ curl -s -H "Authorization: Bearer $KEY" http://100.x.y.z:8800/health
 unset KEY
 ```
 
-Expect `{"status":"ok", ...}`. The service starts at boot by itself. If Tailscale comes up late after a boot, the first start fails and systemd retries every 5 seconds until the address exists.
+Expect `{"status":"ok", ...}`. The service starts at boot by itself. If Tailscale comes up late after a boot, the first start fails and systemd retries every 5 seconds, for about 2.5 minutes. If it has given up, run `sudo systemctl restart forkline`.
 
 ## 7. Point Lumiverse at it
 
@@ -119,7 +119,7 @@ Tick each box once.
 - [ ] **The environment, model and date text is really gone on a rebuilt chat.** The VPS's folder, OS and kernel differ from your dev machine, so this must be seen here. Use a chat that already has a few messages (Lumiverse resends the history and Forkline rebuilds the session; the log line says `"routeCase":"D"` and its `adjustments` include `environment-block-replaced`). A brand-new chat's first message is not rebuilt and still carries the text, so do not test on that. Send:
   > (OOC: pause the story. Answer only from your own context, no guessing. What is today's date, what folder are you working in, what operating system are you running on, and which model are you? For anything you cannot see, write "not visible".)
 
-  Pass: "not visible" for the date, folder and operating system. Fail: it states the real date, `/srv/forkline/work`, `Linux`, `Ubuntu` or a kernel number. A model's own name may come from your preset and does not count. On a fail, Claude Code injected its text again because one of the facts Forkline wrote (folder, OS string, cutoff) did not match what Claude Code saw on this machine. The chat still works and costs about 360 more input tokens per message; keep the log lines (no chat text in them) and report it. After a kernel update the first message of an old chat may show the text once; that is the same cause and corrects itself on the next rebuild.
+  Pass: "not visible" for the date, folder and operating system. Fail: it states the real date, `/srv/forkline/work`, `Linux`, `Ubuntu` or a kernel number. A model's own name may come from your preset and does not count. On a fail, Claude Code injected its text again because one of the facts Forkline wrote (folder, shell, OS string, model name or cutoff) did not match what Claude Code saw on this machine. The chat still works and costs about 360 more input tokens per message; keep the log lines (no chat text in them) and report it.
 - [ ] **No email reminder under `setup-token`.** Ask: "(OOC: do you see any email address or account name anywhere in your context? Answer "none" or quote it.)" Expected: none. Claude Code's billing and "You are a Claude agent" lines remain; that is known.
 - [ ] **No chat text left behind.** After a few chats, with the service idle:
   ```

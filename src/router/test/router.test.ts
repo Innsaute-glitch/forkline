@@ -1,9 +1,12 @@
+import { mkdtempSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { delimiter, join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { INJECTED_TEXT_FILLER } from '../../constants.js';
 import { createLogger } from '../../logger.js';
 import { goldenConfig, readFixture } from '../../test/helpers.js';
 import type { TranslatedRequest } from '../../types.js';
-import { createRouter } from '../index.js';
+import { createRouter, detectShell } from '../index.js';
 import { MemorySessionStore } from '../memory-store.js';
 
 const router = () => createRouter(goldenConfig(), createLogger('silent'));
@@ -58,6 +61,16 @@ describe('router v0', () => {
     expect(second.sessionStore).not.toBe(first.sessionStore);
     await expect(r.record({ translated: t, plan: first, replyText: 'x' })).resolves.toBeUndefined();
     expect(() => r.close()).not.toThrow();
+  });
+});
+
+describe('detectShell', () => {
+  it('finds zsh anywhere on PATH, otherwise bash', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'forkline-shell-'));
+    writeFileSync(join(dir, 'zsh'), '');
+    expect(detectShell(`/nowhere${delimiter}${dir}`)).toBe('zsh');
+    expect(detectShell('/nowhere')).toBe('bash');
+    expect(detectShell('')).toBe('bash');
   });
 });
 

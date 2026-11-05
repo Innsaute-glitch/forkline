@@ -1,3 +1,4 @@
+import { adjustmentsHeader } from '../chat.js';
 import { describe, expect, it } from 'vitest';
 import { bearerMatches } from '../auth.js';
 import { prepend } from '../first-event.js';
@@ -64,5 +65,12 @@ describe('prepend', () => {
       break;
     }
     expect(state.returned).toBe(true);
+  });
+});
+
+describe('adjustmentsHeader', () => {
+  it('keeps normal names and makes any client field name legal in a header', () => {
+    expect(adjustmentsHeader(['system-header-added', 'top_p-ignored'])).toBe('system-header-added,top_p-ignored');
+    expect(adjustmentsHeader(['\u6e29\u5ea6-ignored', 'a\r\nb-ignored', 'c,d-ignored'])).toBe('??-ignored,a??b-ignored,c?d-ignored');
   });
 });

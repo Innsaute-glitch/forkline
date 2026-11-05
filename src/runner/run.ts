@@ -53,7 +53,8 @@ function resultFacts(m: Extract<SDKMessage, { type: 'result' }>): ResultFacts {
     apiError: loose.api_error as string | undefined,
     apiErrorCode: loose.api_error_code as string | undefined,
     stopReason: m.stop_reason,
-    message: m.subtype === 'success' ? m.result : (errors[0] ?? ''),
+    // On a good result `result` is the reply itself, which must never be read as error text.
+    message: m.subtype === 'success' ? (m.is_error ? m.result : '') : (errors[0] ?? ''),
     usage: usageOf(m.usage),
   };
 }

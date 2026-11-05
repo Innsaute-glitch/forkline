@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { removeAllLocalTranscripts, removeLocalTranscript } from '../local-transcript.js';
+import { removeAllLocalTranscripts, removeLocalTranscript, removeStaleResumeFolders } from '../local-transcript.js';
 
 function configDir(): string {
   const dir = mkdtempSync(join(tmpdir(), 'forkline-transcript-'));
@@ -27,6 +27,17 @@ describe('local transcripts', () => {
     removeAllLocalTranscripts(dir);
     expect(existsSync(join(dir, 'projects'))).toBe(false);
     expect(existsSync(join(dir, '.claude.json'))).toBe(true);
+  });
+
+  it('removes only the resume folders of this work folder', () => {
+    const temp = mkdtempSync(join(tmpdir(), 'forkline-temp-'));
+    mkdirSync(join(temp, 'claude-resume-mine', 'projects', '-srv-forkline-work'), { recursive: true });
+    mkdirSync(join(temp, 'claude-resume-other', 'projects', '-home-someone-else'), { recursive: true });
+    mkdirSync(join(temp, 'unrelated', 'projects', '-srv-forkline-work'), { recursive: true });
+    removeStaleResumeFolders('/srv/forkline/work', temp);
+    expect(existsSync(join(temp, 'claude-resume-mine'))).toBe(false);
+    expect(existsSync(join(temp, 'claude-resume-other'))).toBe(true);
+    expect(existsSync(join(temp, 'unrelated'))).toBe(true);
   });
 
   it('accepts a config folder with no transcripts', () => {

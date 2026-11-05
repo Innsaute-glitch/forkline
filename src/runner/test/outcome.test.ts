@@ -31,6 +31,16 @@ describe('classifyOutcome', () => {
   it('a fallback refusal trips the model guard', () => {
     expect(errorOf(facts({ refusalFallback: true, result: result() })).code).toBe('model-mismatch');
   });
+  it('an error subtype is an error even without is_error', () => {
+    const e = errorOf(facts({ sawText: true, result: result({ subtype: 'error_during_execution', message: 'broke' }) }));
+    expect(e).toMatchObject({ code: 'upstream', message: 'broke' });
+  });
+
+  it('an earlier error frame does not undo a finished reply', () => {
+    const f = facts({ sawText: true, assistantErrors: ['max_output_tokens'], result: result({ message: '' }) });
+    expect(classifyOutcome(f, NOW)).toEqual({ kind: 'finished', finishReason: 'stop' });
+  });
+
   it('is_error with subtype success is never a reply', () => {
     const e = errorOf(facts({ result: result({ isError: true, message: 'something broke' }) }));
     expect(e).toMatchObject({ code: 'upstream', status: 502, message: 'something broke' });

@@ -88,6 +88,7 @@ export function buildEntries(history: HistoryItem[], ctx: EntryContext): Session
 export interface SeedFacts {
   workDir: string;
   platform: string;
+  shell: string;
   osVersion: string;
   /** Local date, YYYY-MM-DD. */
   today: string;
@@ -113,8 +114,7 @@ export function buildSeedEntries(
         isGitRepo: false,
         additionalWorkingDirectories: [],
         platform: facts.platform,
-        // The env allow-list withholds SHELL, so Claude Code falls back to bash.
-        shell: 'bash',
+        shell: facts.shell,
         osVersion: facts.osVersion,
       },
     },

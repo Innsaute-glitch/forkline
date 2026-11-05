@@ -8,85 +8,99 @@
       "id": "claude-opus-5-5",
       "claudeModel": "claude-opus-5-5",
       "marketingName": "Opus 5.5",
-      "knowledgeCutoff": "June 2026"
+      "knowledgeCutoff": "June 2026",
+      "maxOutputTokens": 128000
     },
     {
       "id": "claude-sonnet-5-5",
       "claudeModel": "claude-sonnet-5-5",
       "marketingName": "Sonnet 5.5",
-      "knowledgeCutoff": "June 2026"
+      "knowledgeCutoff": "June 2026",
+      "maxOutputTokens": 128000
     },
     {
       "id": "claude-haiku-5-5",
       "claudeModel": "claude-haiku-5-5",
       "marketingName": "Haiku 5.5",
-      "knowledgeCutoff": "June 2026"
+      "knowledgeCutoff": "June 2026",
+      "maxOutputTokens": 128000
     },
     {
       "id": "claude-fable-5-1",
       "claudeModel": "claude-fable-5-1",
       "marketingName": "Fable 5.1",
-      "knowledgeCutoff": "June 2026"
+      "knowledgeCutoff": "June 2026",
+      "maxOutputTokens": 128000
     },
     {
       "id": "claude-fable-5",
       "claudeModel": "claude-fable-5",
       "marketingName": "Fable 5",
-      "knowledgeCutoff": "January 2026"
+      "knowledgeCutoff": "January 2026",
+      "maxOutputTokens": 128000
     },
     {
       "id": "claude-opus-5",
       "claudeModel": "claude-opus-5",
       "marketingName": "Opus 5",
-      "knowledgeCutoff": "May 2026"
+      "knowledgeCutoff": "May 2026",
+      "maxOutputTokens": 128000
     },
     {
       "id": "claude-sonnet-5",
       "claudeModel": "claude-sonnet-5",
       "marketingName": "Sonnet 5",
-      "knowledgeCutoff": "January 2026"
+      "knowledgeCutoff": "January 2026",
+      "maxOutputTokens": 128000
     },
     {
       "id": "claude-opus-4-8",
       "claudeModel": "claude-opus-4-8",
       "marketingName": "Opus 4.8",
-      "knowledgeCutoff": "January 2026"
+      "knowledgeCutoff": "January 2026",
+      "maxOutputTokens": 128000
     },
     {
       "id": "claude-opus-4-7",
       "claudeModel": "claude-opus-4-7",
       "marketingName": "Opus 4.7",
-      "knowledgeCutoff": "January 2026"
+      "knowledgeCutoff": "January 2026",
+      "maxOutputTokens": 128000
     },
     {
       "id": "claude-opus-4-6",
       "claudeModel": "claude-opus-4-6",
       "marketingName": "Opus 4.6",
-      "knowledgeCutoff": "May 2025"
+      "knowledgeCutoff": "May 2025",
+      "maxOutputTokens": 128000
     },
     {
       "id": "claude-sonnet-4-6",
       "claudeModel": "claude-sonnet-4-6",
       "marketingName": "Sonnet 4.6",
-      "knowledgeCutoff": "August 2025"
+      "knowledgeCutoff": "August 2025",
+      "maxOutputTokens": 128000
     },
     {
       "id": "claude-opus-4-5",
       "claudeModel": "claude-opus-4-5",
       "marketingName": "Opus 4.5",
-      "knowledgeCutoff": "May 2025"
+      "knowledgeCutoff": "May 2025",
+      "maxOutputTokens": 64000
     },
     {
       "id": "claude-sonnet-4-5",
       "claudeModel": "claude-sonnet-4-5",
       "marketingName": "Sonnet 4.5",
-      "knowledgeCutoff": "January 2025"
+      "knowledgeCutoff": "January 2025",
+      "maxOutputTokens": 64000
     },
     {
       "id": "claude-haiku-4-5",
       "claudeModel": "claude-haiku-4-5",
       "marketingName": "Haiku 4.5",
-      "knowledgeCutoff": "February 2025"
+      "knowledgeCutoff": "February 2025",
+      "maxOutputTokens": 64000
     }
   ],
   "defaultModel": "claude-sonnet-5-5",

@@ -82,7 +82,10 @@ export function classifyOutcome(facts: OutcomeFacts, nowSeconds: number): Outcom
   const result = facts.result;
   const synthetic = facts.syntheticText.length > 0;
   const text = result?.message || facts.syntheticText.at(-1) || (facts.thrownMessage ? stripThrownPrefix(facts.thrownMessage) : '');
-  const failed = result?.isError === true || synthetic || facts.thrownMessage !== undefined;
+  // A result decides; without one, local text or a thrown error means the run failed.
+  const failed = result
+    ? result.isError || result.subtype !== 'success'
+    : synthetic || facts.thrownMessage !== undefined;
 
   // Result with no model call and zero usage, not an error: a Claude Code command answered locally.
   if (result && !result.isError && !facts.sawMessageStart && totalTokens(result.usage) === 0) {
@@ -94,7 +97,8 @@ export function classifyOutcome(facts: OutcomeFacts, nowSeconds: number): Outcom
 
   // A rejected window only counts when the run did not produce a reply.
   const noReply = failed || !facts.sawText;
-  const errors = facts.assistantErrors;
+  // An error frame followed by a good reply was recovered from, for example an auto-continue.
+  const errors = noReply ? facts.assistantErrors : [];
   const rate = facts.rateLimit;
   if (
     errors.includes('rate_limit') ||
@@ -127,7 +131,7 @@ export function classifyOutcome(facts: OutcomeFacts, nowSeconds: number): Outcom
   if (text.startsWith('No conversation found')) {
     return { kind: 'error', error: bridgeError('session-stale', text) };
   }
-  if (failed) {
+  if (failed || (synthetic && !facts.sawText)) {
     return { kind: 'error', error: bridgeError('upstream', text || 'Claude Code reported an error') };
   }
   if (!result) {

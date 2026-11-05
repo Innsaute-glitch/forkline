@@ -1,7 +1,8 @@
-// Router v0: case A when history is empty, otherwise case D. Task 5 takes this over for v1.
+// Router: case A when history is empty, otherwise case D. Forkline keeps no sessions.
 import { randomUUID } from 'node:crypto';
-import { realpathSync } from 'node:fs';
+import { existsSync, realpathSync } from 'node:fs';
 import { release, type } from 'node:os';
+import { delimiter, join } from 'node:path';
 import type { Config } from '../config.js';
 import type { Logger } from '../logger.js';
 import { buildEntries, buildSeedEntries, type SeedFacts } from '../transcript/index.js';
@@ -26,11 +27,20 @@ function realWorkDir(workDir: string): string {
   }
 }
 
+/**
+ * The env allow-list withholds SHELL, so Claude Code picks one itself: zsh if it is anywhere on
+ * PATH, otherwise bash.
+ */
+export function detectShell(path = process.env.PATH ?? ''): string {
+  return path.split(delimiter).some((dir) => dir && existsSync(join(dir, 'zsh'))) ? 'zsh' : 'bash';
+}
+
 function seedFacts(config: Config, claudeModel: string): SeedFacts {
   const model = config.models.find((candidate) => candidate.claudeModel === claudeModel);
   return {
     workDir: realWorkDir(config.paths.workDir),
     platform: process.platform,
+    shell: detectShell(),
     osVersion: `${type()} ${release()}`,
     today: localDate(new Date()),
     identity:

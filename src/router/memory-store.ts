@@ -1,4 +1,4 @@
-// Per-request in-memory SessionStore (v0). Task 5 replaces it with SQLite.
+// Per-request in-memory SessionStore. Forkline keeps no sessions.
 import type { SessionKey, SessionStore, SessionStoreEntry } from '@anthropic-ai/claude-agent-sdk';
 
 /**

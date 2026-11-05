@@ -40,6 +40,18 @@ export interface ChatDeps {
 
 type RunGenerator = AsyncGenerator<RunEvent>;
 
+/** Logged as `errorCode` when shutdown ended the run. Not a client-visible error. */
+export const SERVER_SHUTDOWN = 'server-shutdown';
+const STATUS_SERVER_STOPPING = 503;
+
+/**
+ * The adjustments header value. Names can hold a client's field name, which may not be legal in a
+ * header, and writing an illegal value throws after the run has started.
+ */
+export function adjustmentsHeader(adjustments: string[]): string {
+  return adjustments.map((name) => name.replace(/[^\x21-\x2b\x2d-\x7e]/g, '?')).join(',');
+}
+
 /** Resolves on drain, or on close so a vanished client cannot hang the loop. */
 function drained(res: FastifyReply['raw']): Promise<void> {
   return new Promise((resolve) => {
@@ -97,6 +109,8 @@ export function createChatHandler(deps: ChatDeps) {
     /** True once the response was sent, or taken over with hijack(). */
     let taken = false;
     let adjustmentsValue: string | null = null;
+    let gen: RunGenerator | undefined;
+    let stopMatched = false;
 
     // ---- response helpers (each records status, error code and first-byte time) ----
 
@@ -117,8 +131,8 @@ export function createChatHandler(deps: ChatDeps) {
         taken = true;
         reply.hijack();
       }
-      if (rec.status === 0) rec.status = STATUS_CLIENT_CLOSED;
-      rec.errorCode ??= CLIENT_DISCONNECTED;
+      if (rec.status === 0) rec.status = clientGone ? STATUS_CLIENT_CLOSED : STATUS_SERVER_STOPPING;
+      rec.errorCode ??= clientGone ? CLIENT_DISCONNECTED : SERVER_SHUTDOWN;
       if (!raw.writableEnded) raw.destroy();
       return reply;
     };
@@ -182,7 +196,7 @@ export function createChatHandler(deps: ChatDeps) {
       rec.model = translated.claudeModel;
       rec.stream = translated.params.stream;
       rec.adjustments = translated.adjustments;
-      adjustmentsValue = translated.adjustments.join(',');
+      adjustmentsValue = adjustmentsHeader(translated.adjustments);
       reply.header(ADJUSTMENT_HEADER, adjustmentsValue);
 
       // ---- Step 2: slot ----
@@ -209,7 +223,7 @@ export function createChatHandler(deps: ChatDeps) {
       if (clientGone) return sendNothing();
 
       // ---- Step 5: run, and look at the first event before sending anything ----
-      let gen = startRun(translated, plan);
+      gen = startRun(translated, plan);
       let first = await gen.next();
       if (!first.done && first.value.type === 'error' && first.value.error.code === 'session-stale') {
         await gen.return(undefined);
@@ -243,12 +257,15 @@ export function createChatHandler(deps: ChatDeps) {
         model: translated.responseModel,
         stop: translated.params.stop,
         includeUsage: translated.params.includeUsage,
-        onStopMatched: () => ctl.abort(),
+        onStopMatched: () => {
+          stopMatched = true;
+          ctl.abort();
+        },
         onDone: (r) => {
           done.result = r;
         },
       });
-      const events = prepend<RunEvent>(head, gen);
+      const events = prepend<RunEvent>(head, gen as RunGenerator);
 
       if (translated.params.stream) {
         // ---- Streaming: send 200 now ----
@@ -274,6 +291,7 @@ export function createChatHandler(deps: ChatDeps) {
           const clientStayed = !clientGone;
           if (!raw.destroyed && !raw.writableEnded) raw.end();
           if (clientGone) rec.errorCode ??= CLIENT_DISCONNECTED;
+          else if (ctl.signal.aborted && !stopMatched) rec.errorCode ??= SERVER_SHUTDOWN;
           recordUsage(done.result);
           await maybeRecord(translated, plan, done.result, clientStayed);
         }
@@ -295,6 +313,9 @@ export function createChatHandler(deps: ChatDeps) {
     } catch (err) {
       log.error({ requestId, err }, 'chat request failed');
       rec.errorCode ??= 'upstream';
+      // Nothing else will end the run, and its subprocess, on this path.
+      ctl.abort();
+      await gen?.return(undefined).catch(() => undefined);
       if (!taken) return sendError(bridgeError('upstream', 'internal error'));
       if (!raw.writableEnded) raw.destroy();
       return reply;

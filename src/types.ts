@@ -103,7 +103,7 @@ export type RouteCase = 'A' | 'B' | 'C' | 'D';
 
 export interface RoutePlan {
   case: RouteCase;
-  /** Session the transcript lands in: seeded id for D, stored id for B, new id for A and C. */
+  /** Session the transcript lands in: seeded id for D, new id for A. B and C are unused (docs/task-5-store-design.md). */
   sessionId: string;
   sessionStore: SessionStore;
   /** SDK `resume`. Unset for A. */
@@ -115,7 +115,7 @@ export interface RoutePlan {
 }
 
 export interface RouteOptions {
-  /** Skip the index and rebuild, used after `session-stale`. */
+  /** Always rebuild, used after `session-stale`. */
   forceRebuild?: boolean;
 }
 

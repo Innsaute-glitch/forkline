@@ -1,10 +1,10 @@
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, realpathSync } from 'node:fs';
 import { ConfigError, loadConfig } from './config.js';
 import { buildServer } from './http/server.js';
 import { createLogger } from './logger.js';
 import { createRouter } from './router/index.js';
 import { run } from './runner/index.js';
-import { removeAllLocalTranscripts } from './runner/local-transcript.js';
+import { removeAllLocalTranscripts, removeStaleResumeFolders } from './runner/local-transcript.js';
 
 const log = createLogger();
 
@@ -25,6 +25,7 @@ mkdirSync(config.paths.workDir, { recursive: true, mode: 0o700 });
 mkdirSync(config.paths.configDir, { recursive: true, mode: 0o700 });
 // Anything left here came from a crash; nothing is running yet.
 removeAllLocalTranscripts(config.paths.configDir);
+removeStaleResumeFolders(realpathSync(config.paths.workDir));
 
 const router = createRouter(config, log);
 const app = buildServer({ config, log, router, run });

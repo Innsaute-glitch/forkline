@@ -47,6 +47,15 @@ const types = (events: RunEvent[]) => events.map((e) => e.type);
 afterEach(() => { vi.useRealTimers(); resetRateLimits(); });
 
 describe('run', () => {
+  it.each([
+    'No conversation found its way to the lighthouse that night.',
+    'The arcade machine requires usage credits, Mira said.',
+  ])('keeps a reply whose own text looks like an error: %s', async (reply) => {
+    const f = fake([init(), start(), text(reply), ok({ result: reply })]);
+    const events = await collect(run(input(), f.fn));
+    expect(types(events)).toEqual(['started', 'text', 'finished']);
+  });
+
   it('maps stream deltas to started, reasoning, text and finished', async () => {
     const f = fake([init(), start(), think('hm'), text('Hel'), text('lo'), { type: 'assistant', message: { model: MODEL, content: [{ type: 'text', text: 'ignored copy' }] } }, ok()]);
     const events = await collect(run(input(), f.fn));
