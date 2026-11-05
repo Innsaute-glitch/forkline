@@ -1,4 +1,4 @@
-// Transcript entries for rebuilt history (case D). Templates: research-notes.md section 4.
+// Transcript entries for rebuilt history (case D).
 import type { SessionStoreEntry } from '@anthropic-ai/claude-agent-sdk';
 import { INJECTED_TEXT_FILLER } from '../constants.js';
 import type { HistoryItem, MessageContent } from '../types.js';
@@ -42,7 +42,7 @@ function systemText(content: MessageContent): string {
   return assistantText(content);
 }
 
-/** Turns history into chained transcript entries (RN section 4). Pure given `ctx`. */
+/** Turns history into chained transcript entries. Pure given `ctx`. */
 export function buildEntries(history: HistoryItem[], ctx: EntryContext): SessionStoreEntry[] {
   const entries: SessionStoreEntry[] = [];
   let parentUuid: string | null = null;

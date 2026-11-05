@@ -1,4 +1,4 @@
-// Outcome mapping (plan.md section 3.1). Pure: the run loop collects facts, this decides.
+// Outcome mapping. Pure: the run loop collects facts, this decides.
 // Typed SDK fields first; message text only where no typed field exists.
 import type { SDKAssistantMessageError, TerminalReason } from '@anthropic-ai/claude-agent-sdk';
 import { bridgeError } from '../errors.js';

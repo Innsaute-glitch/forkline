@@ -35,7 +35,7 @@ export function translatedFixture(overrides: Partial<TranslatedRequest> = {}): T
   return { ...base, ...overrides };
 }
 
-// ---- stream mapper fakes (they follow the contract in plan.md, not the real format) ----
+// ---- stream mapper fakes (they follow the contract, not the real format) ----
 
 export const streamCalls = { toSse: 0, toCompletion: 0 };
 

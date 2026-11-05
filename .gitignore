@@ -23,8 +23,12 @@ __pycache__/
 secrets/
 *.log
 
-# Orchestrator working files and tool scratch folders
-tasks/*.md
+# Internal working files, kept on disk only
+plan.md
+plan-brief.md
+research-notes.md
+CLAUDE.md
+tasks/
 notes.md
 .playwright-mcp/
 

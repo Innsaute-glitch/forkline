@@ -1,4 +1,4 @@
-// POST /v1/chat/completions: the request flow of plan.md section 3.1, steps 1 to 8.
+// POST /v1/chat/completions: the request flow.
 import { randomUUID } from 'node:crypto';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { Config } from '../config.js';

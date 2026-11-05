@@ -2,7 +2,7 @@
 import type { SessionKey, SessionStore, SessionStoreEntry } from '@anthropic-ai/claude-agent-sdk';
 
 /**
- * Follows the store rules in plan.md section 3.1: keyed on `sessionId` only, entries kept in
+ * Keyed on `sessionId` only, entries kept in
  * call order, de-duplicated by `uuid` when present, always appended when there is no `uuid`,
  * and a `subpath` key (subagents) is a no-op on append and null on load.
  */

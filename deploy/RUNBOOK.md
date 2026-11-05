@@ -111,7 +111,7 @@ Expect `{"status":"ok", ...}`. The service starts at boot by itself. If Tailscal
 
 Send a short message. A reply streaming back is the "phone test" for this task.
 
-## 8. Checks to do on the VPS (brief section 14, "P7")
+## 8. Checks to do on the VPS
 
 Tick each box once.
 

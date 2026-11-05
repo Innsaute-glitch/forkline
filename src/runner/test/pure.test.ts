@@ -74,7 +74,7 @@ describe('buildQueryOptions', () => {
     expect(c).toMatchObject({ resume: 'src', sessionId: 'new', forkSession: true, resumeSessionAt: 'cut' });
   });
 
-  it('sets the brief section 7 options and never fallbackModel', () => {
+  it('sets the fixed options and never fallbackModel', () => {
     const o = build(plan({ case: 'D', resume: 's1' }));
     expect(o).toMatchObject({
       cwd: '/tmp/forkline-golden/work', model: 'claude-sonnet-5-5', tools: [], skills: [], settingSources: [], mcpServers: {},

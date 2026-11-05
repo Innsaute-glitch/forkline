@@ -1,4 +1,4 @@
-// The run loop: one SDK `query()` turned into RunEvents (plan.md section 3.1, "Runner event rules").
+// The run loop: one SDK `query()` turned into RunEvents.
 import { query as sdkQuery, type Options, type Query, type SDKMessage, type SDKUserMessage } from '@anthropic-ai/claude-agent-sdk';
 import type { Config } from '../config.js';
 import { bridgeError } from '../errors.js';
@@ -75,7 +75,7 @@ function removeTranscript(configDir: string, sessionId: string): void {
 }
 
 /**
- * Runs one request. Never retries (plan.md section 3.1). Ends with exactly one `finished` or
+ * Runs one request. Never retries. Ends with exactly one `finished` or
  * `error`, except when `signal` aborts: then it ends with no terminal event. `return()` stops the
  * subprocess the same way an abort does.
  */

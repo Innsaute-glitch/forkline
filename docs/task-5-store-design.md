@@ -1,6 +1,6 @@
 # Task 5 archive: the session store we didn't build
 
-Dropped on 2026-11-05. This keeps the design, the evidence and the conditions for revisiting it. The full history is also in git: `git show 6bb962b:plan.md`.
+Dropped on 2026-11-05. This keeps the design, the evidence and the conditions for revisiting it.
 
 ## What it was
 A SQLite store for Claude Code sessions, plus an index of message hashes. A request matching stored history would resume a session (case B) or fork it (case C) rather than rebuild it (case D). The aim was cheap swipes and edits. It also brought per-session locks, retention and cleanup of local copies.
@@ -17,13 +17,13 @@ Prompt caching works on content, not on sessions. A rebuild that sends the same 
 
 Sonnet 5.5 showed the same pattern in the phone test log. Dropping it also means no chat copies in a database, and much less undocumented behaviour to depend on.
 
-An earlier claim that the environment-block removal caused this caching was wrong: the table shows caching is the same either way. RN sections 4 and 14 measured a rebuilt turn caching only the system prompt (about 2,950 tokens written on a 3k chat). That wasn't reproduced here, and the reason wasn't found. The older test used a normal login and a different setup.
+An earlier claim that the environment-block removal caused this caching was wrong: the table shows caching is the same either way. Earlier research measured a rebuilt turn caching only the system prompt (about 2,950 tokens written on a 3k chat). That wasn't reproduced here, and the reason wasn't found. The older test used a normal login and a different setup.
 
 ## If Anthropic closes the injected-text workaround
 **The store is not the fix.** If `buildSeedEntries` stops working, the environment, model and date text returns at the end of each request, which is confusing but harmless to caching (right-hand column), and costs about 360 tokens per request. Regression check 14 will fail, and that is the signal.
 
 Try these first, in order:
-1. Seeds without `rendered`. In testing this moved the block to the earlier slot we seeded it in, away from the latest turn (`plan-brief.md` section 18).
+1. Seeds without `rendered`. In testing this moved the block to the earlier slot we seeded it in, away from the latest turn.
 2. Check whether new SDK options or documented settings cover it.
 3. Stay on the last SDK version that works, for as long as its models are served.
 
@@ -35,7 +35,7 @@ Try these first, in order:
 Measure first: run the cache test above before and after. The store only helps if it sends different bytes from a rebuild, or if rebuilds stop working.
 
 ## Known risks of the design
-- Lumiverse's normal turns can never continue a stored session, because the lorebook moves to the new end each turn (RN section 16). Only swipes and edits would use it.
+- Lumiverse's normal turns can never continue a stored session, because the lorebook moves to the new end each turn. Only swipes and edits would use it.
 - Fork cut point: the last entry before the live user entry, or the same user message is sent twice. Never verified live. The SDK's guidance agrees: fork at the kept turn's last chain entry.
 - `route` must run under the lock, and failed runs must not be indexed. Seed sessions as `fork` and promote them in `record`.
 - `finished` already waits for the SDK iterator, so entries are stored before `record`.
@@ -46,7 +46,7 @@ The B and C types, `lockKey`, the limiter's lock path (tested) and the `router.r
 
 ---
 
-## Original contract text (plan.md, version 3-4 era)
+## Original contract text
 
 ### Session and store rules
 - **Store keys:** adapters key on `sessionId` only and ignore `projectKey`, because `query()` derives that value internally. Session IDs are UUIDs and there is one `cwd`. For a `key.subpath`: `append` is a no-op and `load` returns null.
@@ -78,7 +78,7 @@ Dev port: 8802
 
 Accepts:     `TranslatedRequest`, `RouteRecord`
 Produces:    SQLite `SessionStore`, `Router` v1, retention sweep
-Does:        §3.1 session and store rules; longest-prefix lookup picking B, C or D; `lockKey`; retention job with local-copy cleanup; tracking failed `append` calls so those sessions are never indexed. **First**, measure on Haiku with a history of at least 3k tokens, because prompts near 700 tokens showed no cache reads (RN §8): the fork cut point with seeds as the last entries, and that the fork stays free of injected text; the fork cut point on a swipe (one copy of the user message, full cache); C fork plus extra rebuilt entries; whether an edit gains any cache over D.
+Does:        §3.1 session and store rules; longest-prefix lookup picking B, C or D; `lockKey`; retention job with local-copy cleanup; tracking failed `append` calls so those sessions are never indexed. **First**, measure on Haiku with a history of at least 3k tokens, because prompts near 700 tokens showed no cache reads : the fork cut point with seeds as the last entries, and that the fork stays free of injected text; the fork cut point on a swipe (one copy of the user message, full cache); C fork plus extra rebuilt entries; whether an edit gains any cache over D.
 Does NOT:    no changes to translator, runner or HTTP code. If one is needed, report it.
 Tools:       `better-sqlite3`, WAL mode.
 Done-check:  a swipe shows `cache_read_input_tokens` covering the history and `cache_creation_input_tokens` near 0, with one copy of the user message; an edit routes to C if it measured a gain, else D, with the numbers reported; sessions survive a restart; expired rows and old local files are removed; concurrent calls on one session serialize; a killed process leaves a usable store; a failed `append` leaves the session unindexed; a seeded session whose run failed expires on the fork TTL.

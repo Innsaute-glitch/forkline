@@ -1,4 +1,4 @@
-// Shared test helpers (orchestrator-owned). Test code only.
+// Shared test helpers. Test code only.
 import { readFileSync } from 'node:fs';
 import { parseConfig, type Config } from '../config.js';
 

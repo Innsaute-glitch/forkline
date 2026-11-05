@@ -1,4 +1,4 @@
-// Forkline regression suite (brief section 12). Run with `npm run regression`, before every engine upgrade.
+// Forkline regression suite. Run with `npm run regression`, before every engine upgrade.
 // Flags (after `--`):  --only 3,9   --skip 13   --list   --record-baseline   --wrong 12   --keep
 // Live calls use Haiku, except check 13, which calls each configured model once.
 import { execFileSync } from 'node:child_process';

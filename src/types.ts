@@ -1,4 +1,4 @@
-// Shared contract types (plan.md section 3.1). Only the orchestrator edits this file.
+// Types shared across the server.
 import type { SessionStore } from '@anthropic-ai/claude-agent-sdk';
 
 // ---- OpenAI request, as the client sends it ----

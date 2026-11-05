@@ -1,7 +1,7 @@
 import type { Ctx } from '../harness.js';
 
 export interface Check {
-  /** Brief section 12 number, or a letter for the checks the plan adds. */
+  /** Check number. */
   id: string;
   title: string;
   /** Which models the check calls live, for the cost line in `--list`. */

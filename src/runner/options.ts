@@ -1,4 +1,4 @@
-// Pure builders for the SDK call (brief section 7 and the per-case table in plan.md section 3.1).
+// Pure builders for the SDK call.
 import type { Options, SDKUserMessage } from '@anthropic-ai/claude-agent-sdk';
 import type { Config } from '../config.js';
 import { toContent } from '../transcript/index.js';

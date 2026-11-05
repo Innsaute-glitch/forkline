@@ -1,5 +1,5 @@
 // Local request capture: the position and content checks need the exact request Claude Code sends.
-// Method (allowed by CLAUDE.md for position checks): point ANTHROPIC_BASE_URL at a throwaway server on
+// Method (for position checks): point ANTHROPIC_BASE_URL at a throwaway server on
 // 127.0.0.1 with a dummy token, record the request body, answer 400, forward nothing. The real token
 // never gets near this path: the capture config carries a dummy, and `assertNoRealToken` checks it.
 import { createServer, type IncomingMessage, type Server } from 'node:http';

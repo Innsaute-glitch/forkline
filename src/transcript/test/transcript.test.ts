@@ -19,7 +19,7 @@ describe('buildEntries', () => {
     expect(buildEntries([], ctx())).toEqual([]);
   });
 
-  it('builds user, assistant and system entries from the RN section 4 templates', () => {
+  it('builds user, assistant and system entries from the transcript templates', () => {
     const history: HistoryItem[] = [
       { role: 'assistant', content: 'Greeting.' },
       { role: 'user', content: 'Hello' },
