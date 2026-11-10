@@ -6,11 +6,11 @@ Read this first if you are a new session or a new agent. It should be enough to 
 
 ## Current state
 
-Last updated 2026-11-05.
+Last updated 2026-11-10.
 
-- **Status:** v0 is finished and passed a real phone test through Lumiverse on Sonnet 5.5: edits, swipes, continue, stop mid-reply, reasoning display, cache reads and system prompt changes.
-- **Tests at last run:** 290 unit tests, 9 live tests, 16 regression checks, with both Fable models skipped because they need usage credits.
-- **Engine:** Agent SDK 0.3.318, which bundles Claude Code 2.1.318. The pin is exact.
+- **Status:** v0 is finished and passed a real phone test through Lumiverse on Sonnet 5.5: edits, swipes, continue, stop mid-reply, reasoning display, cache reads and system prompt changes. That test was on engine 0.3.318 and has not been repeated since the upgrade.
+- **Tests at last run (2026-11-10, engine 0.3.322):** 290 unit tests, 9 live tests and 16 regression checks, all passing. Check 13 served all 15 configured models as requested, including Fable 5.2, 5.1 and 5, which were no longer rejected for credits.
+- **Engine:** Agent SDK 0.3.322, which bundles Claude Code 2.1.322. The pin is exact. Upgraded from 0.3.318 to add Fable 5.2 (`claude-fable-5-2`). The only change in the injected text was the version number in the billing line, so the check 11 baseline was recorded again.
 - **Not done yet:** the VPS deployment. `deploy/` has never run on a real server.
 - **License:** PolyForm Noncommercial 1.0.0. Say "source-available", never "open source".
 
@@ -189,7 +189,7 @@ Don't reopen these without new evidence.
 - **VPS deployment.** The owner follows `deploy/RUNBOOK.md`. Agents never connect to the VPS. Still unverified there: `setup-token` auth, the hardened unit, and whether the injected text stays gone and the email reminder stays absent.
 - **Termux.** `deploy/TERMUX.md` covers running on Android inside `proot-distro` Ubuntu. It has never been run, so arm64, `proot` speed, seeds matching inside `proot` and Android killing the process are all unknown. Plain Termux can't work because Claude Code has no Android build, and patching the binary to load there is ruled out by the owner's rule 2.
 - **The owner's main preset** has planning instructions that trigger `reasoning_extraction`. They plan to rework it.
-- **Fable models** have never run the seeded path, because they need usage credits.
+- **Fable models** ran the seeded path for the first time on 2026-11-10: one small rebuilt chat each in check 13, with correct recall, plus a local capture showing no injected text for Fable 5.2 and 5.1. Nothing longer has been tried on them, and why the credits rejection stopped is unknown.
 - **Never seen live:** a context-too-long error, a real usage-limit rejection, a refusal arriving mid-reply. The unit of `resetsAt` is assumed to be seconds.
 - **A whitespace-only assistant entry** in history has no rule. It may get a 400.
 - **Session-title side request:** Claude Code sometimes sends one beside the main call. Its effect on limits is unmeasured. The `title` option may avoid it, but that is untested.

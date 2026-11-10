@@ -72,7 +72,7 @@ Forkline forwards what the client sent. Anything it has to change is listed in t
 
 ## What Claude Code adds to the prompt
 
-Claude Code adds its own text to every session. On Claude Code 2.1.318 with a `setup-token` login:
+Claude Code adds its own text to every session. On Claude Code 2.1.322 with a `setup-token` login:
 
 | Text | Where | Status |
 |---|---|---|
@@ -176,7 +176,7 @@ Every route needs `Authorization: Bearer <FORKLINE_API_KEY>`. Errors look like t
 - The replacement only applies when Forkline's values match Claude Code's exactly. A mismatch has the same safe result.
 
 **Model behaviour**
-- Fable 5.1, Fable 5, Opus 5.5, Opus 5, Sonnet 5.5 and Haiku 5.5 have safety classifiers that can decline harmless requests. The client sees `finish_reason: content_filter` and no reply. The log has a `model refused` line with the category.
+- Fable 5.2, Fable 5.1, Fable 5, Opus 5.5, Opus 5, Sonnet 5.5 and Haiku 5.5 have safety classifiers that can decline harmless requests. The client sees `finish_reason: content_filter` and no reply. The log has a `model refused` line with the category.
 - `reasoning_extraction` is a common cause. It fires on prompts that ask the model to write its thinking or plan into the reply. Remove that instruction, and use the reasoning Forkline already streams.
 - A short note arriving alone after the latest message can be ignored. In testing, a one-sentence note in that position was often missed, while a block of 13 entries was used every time. Headings help.
 
@@ -243,7 +243,7 @@ npm run regression   # real calls, including one per configured model
 | `fixtures/` | Invented requests and expected output |
 | `deploy/` | Install script, systemd unit, runbook |
 
-Tested with Agent SDK 0.3.318, which bundles Claude Code 2.1.318.
+Tested with Agent SDK 0.3.322, which bundles Claude Code 2.1.322.
 
 ## Prior work
 

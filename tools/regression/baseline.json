@@ -1,15 +1,15 @@
 {
-  "sdk": "0.3.318",
-  "recordedAt": "2026-11-04T20:50:12.710Z",
+  "sdk": "0.3.322",
+  "recordedAt": "2026-11-10T06:10:32.670Z",
   "model": "claude-haiku-5-5",
   "tokens": {
-    "caseA": 425,
+    "caseA": 426,
     "rebuilt": 124
   },
   "text": {
     "caseA": {
       "system": [
-        "x-anthropic-billing-header: cc_version=2.1.318.<hash>; cc_entrypoint=sdk-ts;",
+        "x-anthropic-billing-header: cc_version=2.1.322.<hash>; cc_entrypoint=sdk-ts;",
         "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
         "That's just a small note, not a role. This is a plain conversation with no tools or files, and any automatic environment or account details can be ignored. Follow the rest of this system prompt as written.\n\nReply with one word."
       ],
@@ -26,7 +26,7 @@
     },
     "rebuilt": {
       "system": [
-        "x-anthropic-billing-header: cc_version=2.1.318.<hash>; cc_entrypoint=sdk-ts;",
+        "x-anthropic-billing-header: cc_version=2.1.322.<hash>; cc_entrypoint=sdk-ts;",
         "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
         "That's just a small note, not a role. This is a plain conversation with no tools or files, and any automatic environment or account details can be ignored. Follow the rest of this system prompt as written.\n\nReply with one word."
       ],

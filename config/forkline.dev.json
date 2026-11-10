@@ -26,6 +26,13 @@
       "maxOutputTokens": 128000
     },
     {
+      "id": "claude-fable-5-2",
+      "claudeModel": "claude-fable-5-2",
+      "marketingName": "Fable 5.2",
+      "knowledgeCutoff": "June 2026",
+      "maxOutputTokens": 128000
+    },
+    {
       "id": "claude-fable-5-1",
       "claudeModel": "claude-fable-5-1",
       "marketingName": "Fable 5.1",

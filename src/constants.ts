@@ -80,4 +80,4 @@ export const PASSTHROUGH_ENV: readonly string[] = ['PATH', 'HOME', 'LANG', 'TZ']
 export const DEFAULT_CONFIG_PATH = 'config/forkline.dev.json';
 
 /** Pinned engine, shown on /health. Must match package.json. */
-export const SDK_VERSION = '0.3.318';
+export const SDK_VERSION = '0.3.322';

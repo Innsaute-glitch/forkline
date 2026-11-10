@@ -148,7 +148,7 @@ const EMAIL = /[\w.+-]+@[\w-]+\.[\w.-]+/;
 export function makeCheck11(options: { recordBaseline: boolean }): Check {
   return {
     id: '11',
-    title: 'injected text unchanged: total input tokens on a fixed prompt, and the system blocks, against the 0.3.318 baseline',
+    title: 'injected text unchanged: total input tokens on a fixed prompt, and the system blocks, against the recorded baseline',
     cost: 'Haiku x2, tiny prompts',
     async run(ctx) {
       const caseAT = translateChat(ctx, [system('Reply with one word.'), user('Say ok.')]);
